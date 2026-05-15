@@ -44,7 +44,7 @@ const orderSchema = new mongoose.Schema({
   }
 });
 
-// Calculate total amount before saving
+
 orderSchema.pre('save', function(next) {
   try {
     if (this.items && Array.isArray(this.items)) {

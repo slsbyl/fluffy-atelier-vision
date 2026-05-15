@@ -1,5 +1,4 @@
 class OrderController {
-  // Dependency Injection: OrderService is injected via constructor
   constructor(orderService) {
     this.orderService = orderService;
   }

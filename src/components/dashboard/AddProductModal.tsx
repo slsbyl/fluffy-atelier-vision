@@ -104,7 +104,6 @@ const AddProductModal = ({ open, onClose, onSave, editProduct, categories = ["To
     e.preventDefault();
     setError(null);
 
-    // Validation
     if (!name.trim()) {
       setError("Product name is required");
       return;
@@ -147,9 +146,8 @@ const AddProductModal = ({ open, onClose, onSave, editProduct, categories = ["To
 
     try {
       setIsLoading(true);
-      console.log("بيانات المنتج المرسلة للباك-إند:", productData); // 👈 أضف هذا السطر
+      console.log("بيانات المنتج المرسلة للباك-إند:", productData);
       await onSave(productData);
-      // Reset form after successful save
       setName("");
       setBrand("Fluffy");
       setPrice("");

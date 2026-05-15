@@ -1,4 +1,3 @@
-// using native fetch
 async function find() {
     const res = await fetch('https://huggingface.co/api/spaces?search=vton&limit=50');
     const spaces = await res.json();
@@ -11,7 +10,6 @@ async function find() {
                 console.log(s.id + ' is RUNNING');
             }
         } catch (e) {
-            // ignore
         }
     }
 }

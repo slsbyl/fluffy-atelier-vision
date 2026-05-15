@@ -23,7 +23,7 @@ const SignUp = () => {
         email: email.trim().toLowerCase(),
         phone,
         password,
-        role: 'customer' // دور المستخدم الافتراضي
+        role: 'customer'
       });
       
       if (response.data.status === 'success') {
@@ -31,8 +31,7 @@ const SignUp = () => {
         navigate('/login');
       }
     } catch (err: any) {
-      // طباعة تفاصيل الخطأ في الكونسول لتسهيل حله
-      console.error("🔴 تفاصيل خطأ إنشاء الحساب:", err);
+      console.error("تفاصيل خطأ إنشاء الحساب:", err);
       
       if (err.message === "Network Error") {
         alert("لا يمكن الاتصال بالسيرفر! تأكدي من تشغيل الـ Backend على بورت 3000.");

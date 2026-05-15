@@ -1,4 +1,4 @@
-// Inversion of Control (IoC) Container
+
 const Order = require('./models/Order');
 const Product = require('./models/Product');
 const OrderService = require('./services/OrderService');
@@ -21,23 +21,20 @@ class DIContainer {
   }
 }
 
-// Instantiate the container
+
 const container = new DIContainer();
 
-// 1. Register Data Access Layer (Models)
+
 container.register('OrderModel', Order);
 container.register('ProductModel', Product);
 
-// 2. Register Business Logic Layer (Services)
-// Injecting Models into the Service
+
 const orderService = new OrderService(
   container.resolve('OrderModel'),
   container.resolve('ProductModel')
 );
 container.register('OrderService', orderService);
 
-// 3. Register Presentation/Routing Layer (Controllers)
-// Injecting Service into the Controller
 const orderController = new OrderController(
   container.resolve('OrderService')
 );

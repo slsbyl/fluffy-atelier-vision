@@ -19,7 +19,6 @@ exports.getAllProducts = async (req, res) => {
   try {
     const products = await Product.find();
     
-    // Add inStock flag to each product
     const productsWithStock = products.map(p => {
       const productObj = p.toObject ? p.toObject() : p;
       return {
@@ -48,7 +47,6 @@ exports.getProduct = async (req, res) => {
       });
     }
     
-    // Add inStock flag
     const productObj = product.toObject ? product.toObject() : product;
     const productWithStock = {
       ...productObj,
@@ -95,7 +93,6 @@ exports.updateProduct = async (req, res) => {
       });
     }
     
-    // Add inStock flag
     const productObj = product.toObject ? product.toObject() : product;
     const productWithStock = {
       ...productObj,

@@ -13,7 +13,6 @@ exports.tryOn = async (req, res) => {
 
     console.log("Starting Virtual Try-On via Hugging Face Space (fashn-ai/fashn-vton-1.5)...");
 
-    // Convert base64 Data URLs to Blobs, or fetch normal URLs to Blobs
     const getBlobFromUrlOrBase64 = async (source) => {
       try {
         const response = await fetch(source);
@@ -27,12 +26,12 @@ exports.tryOn = async (req, res) => {
     const personBlob = await getBlobFromUrlOrBase64(humanImage);
     const garmentBlob = await getBlobFromUrlOrBase64(productImage);
 
-    // Connect to Gradio Client with HF Token
+    
     const client = await Client.connect("fashn-ai/fashn-vton-1.5", { 
       hf_token: process.env.HUGGINGFACE_API_KEY || "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" 
     });
 
-    // fashn-ai/fashn-vton-1.5 only accepts 'tops', 'bottoms', 'one-pieces'
+    
     let mappedCategory = 'tops';
     if (category) {
         const catLower = category.toLowerCase();
@@ -56,7 +55,7 @@ exports.tryOn = async (req, res) => {
 
     let resultImage;
     if (result && result.data && result.data.length > 0) {
-      // result.data[0] is the output image
+    
       resultImage = result.data[0].url || result.data[0].path;
     }
 

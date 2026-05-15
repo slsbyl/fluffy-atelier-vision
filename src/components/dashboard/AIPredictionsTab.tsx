@@ -28,7 +28,6 @@ const AIPredictionsTab = ({ orders, wholesaleOrders, products }: AIPredictionsTa
   });
 
   useEffect(() => {
-    // 1. Revenue Forecast Calculation
     const allOrdersForRevenue = [
       ...orders.map(o => ({ date: o.createdAt, total: o.totalAmount })),
       ...wholesaleOrders.filter(o => o.status === 'تم التسليم').map(o => ({ date: o.createdAt, total: o.totalPrice }))
@@ -51,9 +50,8 @@ const AIPredictionsTab = ({ orders, wholesaleOrders, products }: AIPredictionsTa
       ? revenueValues.reduce((a, b) => a + b, 0) / revenueValues.length
       : 0;
     
-    const revenueForecast = averageMonthlyRevenue > 0 ? averageMonthlyRevenue * 1.05 : 5000; // Default forecast if no data
+    const revenueForecast = averageMonthlyRevenue > 0 ? averageMonthlyRevenue * 1.05 : 5000;
 
-    // 2. Top RETAIL Product Prediction
     let topRetailProduct = null;
     if (products && products.length > 0) {
         const sortedProducts = [...products].sort((a, b) => (b.soldCount || 0) - (a.soldCount || 0));
@@ -62,13 +60,11 @@ const AIPredictionsTab = ({ orders, wholesaleOrders, products }: AIPredictionsTa
         }
     }
 
-    // 3. Trending Colors & Sizes Prediction
     let totalColorPieces = 0;
     let totalSizePieces = 0;
     const colorCounts: Record<string, number> = {};
     const sizeCounts: Record<string, number> = {};
 
-    // حساب من طلبات التجزئة
     orders.forEach(o => {
       o.items?.forEach((item: any) => {
         const q = Number(item.quantity) || 0;
@@ -77,7 +73,6 @@ const AIPredictionsTab = ({ orders, wholesaleOrders, products }: AIPredictionsTa
       });
     });
 
-    // حساب من طلبات الجملة
     wholesaleOrders.forEach(o => {
       const totalQ = Number(o.totalQuantity) || 0;
       if (o.quantityPerSize) {
@@ -102,13 +97,11 @@ const AIPredictionsTab = ({ orders, wholesaleOrders, products }: AIPredictionsTa
       trends = { color: topColor, colorPct: totalColorPieces > 0 ? Math.round((maxC / totalColorPieces) * 100) : 0, size: topSize, sizePct: totalSizePieces > 0 ? Math.round((maxS / totalSizePieces) * 100) : 0 };
     }
 
-    // 4. Out-of-Stock Risk Prediction
     let atRiskProduct = null;
     if (products && products.length > 0) {
-      // نبحث عن المنتجات التي عليها طلب ومخزونها 15 أو أقل
       const riskyProducts = products.filter(p => p.stock > 0 && p.stock <= 15 && p.soldCount > 0);
       if (riskyProducts.length > 0) {
-        riskyProducts.sort((a, b) => a.stock - b.stock); // نجلب الأقل مخزوناً أولاً
+        riskyProducts.sort((a, b) => a.stock - b.stock);
         atRiskProduct = riskyProducts[0];
       }
     }
@@ -157,7 +150,6 @@ const AIPredictionsTab = ({ orders, wholesaleOrders, products }: AIPredictionsTa
           />
         )}
 
-        {/* كارت خطر نفاذ المخزون */}
         {predictions.atRiskProduct ? (
           <div className="bg-background rounded-3xl border border-destructive/30 p-6 shadow-card relative overflow-hidden">
             <div className="absolute top-0 right-0 w-16 h-16 bg-destructive/10 rounded-bl-full -mr-8 -mt-8" />
@@ -181,7 +173,6 @@ const AIPredictionsTab = ({ orders, wholesaleOrders, products }: AIPredictionsTa
         )}
       </div>
 
-      {/* قسم اتجاهات الموضة والألوان */}
       {predictions.trends && (
         <div className="mt-6 bg-background rounded-3xl border border-border p-6 shadow-card">
           <div className="flex items-start justify-between mb-4">
@@ -196,7 +187,7 @@ const AIPredictionsTab = ({ orders, wholesaleOrders, products }: AIPredictionsTa
           <p className="text-sm font-body text-muted-foreground mt-1">Fashion & Attributes Trends</p>
           <p className="text-xs md:text-sm font-body text-muted-foreground mt-3 pt-3 border-t border-border/50 leading-relaxed">
             تحليل الطلبات السابقة يوضح أن اللون <strong>({predictions.trends.color})</strong> يمثل <strong>{predictions.trends.colorPct}%</strong> من طلبات الألوان، والمقاس <strong>({predictions.trends.size})</strong> يمثل <strong>{predictions.trends.sizePct}%</strong> من طلبات المقاسات. <br/>
-            💡 <strong className="text-primary">نصيحة الذكاء الاصطناعي:</strong> ركزي في شراء القماش وعمليات القص القادمة على هذه المواصفات لتجنب الهدر المادي وزيادة سرعة المبيعات!
+            <strong className="text-primary">نصيحة الذكاء الاصطناعي:</strong> ركزي في شراء القماش وعمليات القص القادمة على هذه المواصفات لتجنب الهدر المادي وزيادة سرعة المبيعات!
           </p>
         </div>
       )}

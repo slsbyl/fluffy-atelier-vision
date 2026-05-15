@@ -20,7 +20,6 @@ const handleSubmit = async (e: React.FormEvent) => {
     });
 
     if (response.data.status === 'success') {
-      // جلب بيانات المستخدم من استجابة السيرفر بشكل صحيح
       const userData = response.data.data?.user || response.data.user;
       const token = response.data.token || response.data.data?.token;
       const userRole = userData?.role || response.data.role;
@@ -31,7 +30,6 @@ const handleSubmit = async (e: React.FormEvent) => {
         localStorage.setItem('role', userRole);
       }
 
-      // التوجيه حسب الصلاحية لفتح لوحة التحكم
       if (userRole === 'owner' || userRole === 'admin') {
         navigate('/owner'); 
       } else {
@@ -39,7 +37,7 @@ const handleSubmit = async (e: React.FormEvent) => {
       }
     }
   } catch (err: any) {
-    console.error("🔴 تفاصيل خطأ اللوجين:", err);
+    console.error("تفاصيل خطأ اللوجين:", err);
     alert(err.response?.data?.message || 'البريد الإلكتروني أو كلمة المرور غير صحيحة');
   }
 };

@@ -11,10 +11,8 @@ const Shop = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // استخراج الأقسام الحقيقية الموجودة في المنتجات فقط وبشكل ديناميكي
   const dynamicCategories = ["All", ...Array.from(new Set(products.map(p => p.category).filter(Boolean)))];
 
-  // Fetch products from backend on component mount
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -24,7 +22,6 @@ const Shop = () => {
         const response = await axios.get('http://localhost:3000/api/v1/products');
 
         if (response.data.status === 'success') {
-          // Transform backend data to match Product interface
           const transformedProducts: Product[] = response.data.data.products.map((item: any) => ({
             id: item._id || item.id,
             name: item.name,
@@ -59,7 +56,6 @@ const Shop = () => {
     fetchProducts();
   }, []);
 
-  // Filter products by category
   const filtered = activeCategory === "All"
     ? products
     : products.filter((p) => p.category === activeCategory);
@@ -76,7 +72,6 @@ const Shop = () => {
           <p className="text-sm font-body text-muted-foreground">Discover pieces designed for the modern woman</p>
         </motion.div>
 
-        {/* Category filter */}
         <div className="flex flex-wrap justify-center gap-3 mb-12">
           {dynamicCategories.map((cat) => (
             <button
@@ -93,7 +88,6 @@ const Shop = () => {
           ))}
         </div>
 
-        {/* Loading State */}
         {loading ? (
           <div className="flex flex-col items-center justify-center py-32">
             <motion.div
@@ -105,7 +99,6 @@ const Shop = () => {
             <p className="mt-4 text-sm font-body text-muted-foreground">Loading amazing products...</p>
           </div>
         ) : error ? (
-          // Error State
           <div className="flex flex-col items-center justify-center py-32">
             <div className="text-center">
               <p className="text-lg font-display text-destructive mb-2">Oops! Something went wrong</p>
@@ -119,7 +112,6 @@ const Shop = () => {
             </div>
           </div>
         ) : filtered.length === 0 ? (
-          // Empty State
           <div className="flex flex-col items-center justify-center py-32">
             <p className="text-center text-muted-foreground font-body text-lg">
               {products.length === 0
@@ -129,7 +121,6 @@ const Shop = () => {
             </p>
           </div>
         ) : (
-          // Products Grid
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6">
             {filtered.map((product, i) => (
               <ProductCard key={product.id} product={product} index={i} />

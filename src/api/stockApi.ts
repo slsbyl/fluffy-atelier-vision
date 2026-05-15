@@ -12,10 +12,7 @@ export interface StockItem {
   quantity: number;
 }
 
-/**
- * Get current product stock
- * Returns the total available stock or stock by size if available
- */
+
 export const getProductStock = async (productId: string) => {
   try {
     const response = await api.get(`/products/${productId}`);
@@ -29,9 +26,6 @@ export const getProductStock = async (productId: string) => {
   }
 };
 
-/**
- * Check if there's enough stock for the requested items
- */
 export const checkAvailableStock = async (
   productId: string,
   requestedQuantity: number
@@ -45,10 +39,7 @@ export const checkAvailableStock = async (
   }
 };
 
-/**
- * Update product stock after successful order
- * Should be called after order is confirmed on backend
- */
+
 export const updateProductStock = async (
   productId: string,
   quantityDecrement: number
@@ -64,10 +55,7 @@ export const updateProductStock = async (
   }
 };
 
-/**
- * Place order and update stock
- * Backend should handle stock updates as part of order processing
- */
+
 export const placeOrder = async (orderData: {
   customerName: string;
   phone: string;
@@ -84,7 +72,7 @@ export const placeOrder = async (orderData: {
   total: number;
 }) => {
   try {
-    // Validate before sending
+  
     if (!orderData.customerName?.trim() || !orderData.phone?.trim() || !orderData.address?.trim() || !orderData.governorate?.trim()) {
       return {
         success: false,
@@ -108,7 +96,7 @@ export const placeOrder = async (orderData: {
       items: orderData.items
     });
 
-    // Handle successful response
+    
     if (response && response.data && response.data.status === "success") {
       return {
         success: true,
@@ -117,7 +105,7 @@ export const placeOrder = async (orderData: {
       };
     }
 
-    // If no success status
+    
     return {
       success: false,
       message: response?.data?.message || "فشل في تأكيد الطلب",
@@ -136,9 +124,6 @@ export const placeOrder = async (orderData: {
   }
 };
 
-/**
- * Restore stock when order is returned
- */
 export const restoreStockOnReturn = async (
   orderId: string,
   items: Array<{ productId: string; quantity: number }>

@@ -1,7 +1,7 @@
 const express = require('express');
 const container = require('../container');
 
-// Resolve the injected controller from our IoC Container
+
 const orderController = container.resolve('OrderController');
 
 const router = express.Router();

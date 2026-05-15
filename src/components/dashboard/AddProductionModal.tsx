@@ -26,7 +26,7 @@ const AddProductionModal = ({ open, onClose, onSave, editRecord }: AddProduction
   const [error, setError] = useState<string | null>(null);
   const [fetchingProducts, setFetchingProducts] = useState(false);
 
-  // Fetch products on mount or when modal opens
+ 
   useEffect(() => {
     if (open && products.length === 0) {
       fetchProducts();
@@ -48,7 +48,7 @@ const AddProductionModal = ({ open, onClose, onSave, editRecord }: AddProduction
     }
   };
 
-  // Reset form when modal opens or editRecord changes
+  
   useEffect(() => {
     if (open) {
       if (editRecord) {
@@ -58,7 +58,6 @@ const AddProductionModal = ({ open, onClose, onSave, editRecord }: AddProduction
         setStatus(editRecord.status || "Pending");
         setStartDate(editRecord.startDate?.split("T")[0] || new Date().toISOString().split("T")[0]);
       } else {
-        // Reset form for new production
         setSelectedProductId("");
         setSelectedProduct("");
         setQuantity("");

@@ -2,7 +2,7 @@ const Order = require('../models/Order');
 const Product = require('../models/Product');
 
 class OrderService {
-  // Dependency Injection: Models are injected via constructor
+  
   constructor(orderModel, productModel) {
     this.orderModel = orderModel;
     this.productModel = productModel;
@@ -15,7 +15,7 @@ class OrderService {
       throw new Error('Order must contain at least one item');
     }
 
-    // Business Logic: Verify products exist and check stock
+   
     for (let item of items) {
       if (item.productId) {
         const product = await this.productModel.findById(item.productId);
