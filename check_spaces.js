@@ -1,0 +1,2 @@
+const ids = ['cocktailpeanut/IDM-VTON', 'AlexLee01/yisol-IDM-VTON', 'Sonui/yisol-IDM-VTON'];
+Promise.all(ids.map(id => fetch('https://huggingface.co/api/spaces/' + id).then(r=>r.json()).then(d=>console.log(id + ': ' + d.runtime?.stage))));
