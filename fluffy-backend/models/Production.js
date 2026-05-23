@@ -4,31 +4,32 @@ const productionSchema = new mongoose.Schema({
   product: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Product',
-    required: [true, 'Product is required']
-  },
-  productName: {
-    type: String,
-    required: true
+    required: [true, 'A production batch must belong to a product']
   },
   quantity: {
     type: Number,
-    required: [true, 'Quantity is required'],
-    min: 1
+    required: [true, 'A production batch must have a quantity'],
+    min: [1, 'Quantity must be at least 1']
   },
   status: {
     type: String,
-    enum: ['Pending', 'Cutting', 'Sewing', 'Finished'],
-    default: 'Pending'
+    enum: ['pending', 'in_progress', 'completed', 'cancelled'],
+    default: 'pending'
   },
   startDate: {
     type: Date,
     default: Date.now
   },
-  completionDate: Date,
-  createdAt: {
-    type: Date,
-    default: Date.now
-  }
+  endDate: {
+    type: Date
+  },
+  assignedWorkers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Worker'
+  }]
+}, {
+  timestamps: true
 });
 
-module.exports = mongoose.model('Production', productionSchema);
+const Production = mongoose.model('Production', productionSchema);
+module.exports = Production;

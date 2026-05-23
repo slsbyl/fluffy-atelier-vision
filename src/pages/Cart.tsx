@@ -63,7 +63,6 @@ const Cart = () => {
   const handleConfirmOrder = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate inputs
     if (!customerName.trim() || !email.trim() || !phone.trim() || !address.trim() || !governorate) {
       toast({
         title: "خطأ",
@@ -85,7 +84,6 @@ const Cart = () => {
     setIsSubmitting(true);
 
     try {
-      // Prepare order data for backend
       const orderData = {
         customerName,
         email,
@@ -104,11 +102,9 @@ const Cart = () => {
         total: finalTotal,
       };
 
-      // إرسال الطلب مباشرة للسيرفر لضمان إرسال الإيميل بشكل صحيح
       const res = await axios.post('http://localhost:3000/api/v1/orders', orderData);
 
       if (res.data.status === 'success') {
-        // حفظ بيانات الطلب الأخير لإتاحة زر الإرجاع فوراً
         setLastPlacedOrder({
           id: res.data.data?.orderId || res.data.data?._id,
           items: items.map(i => ({ productId: i.productId, quantity: i.quantity }))
@@ -123,7 +119,7 @@ const Cart = () => {
         setGovernorate("");
 
         toast({
-          title: "تم تأكيد الطلب بنجاح ✓",
+          title: "تم تأكيد الطلب بنجاح",
           description: `شكراً ${customerName}! تم تأكيد طلبك بقيمة $${finalTotal}. سيتم التوصيل قريباً.`,
         });
       } else {
@@ -149,14 +145,12 @@ const Cart = () => {
     if (lastPlacedOrder) {
       try {
         setIsSubmitting(true);
-        // إرجاع المخزون وتحديث حالة الطلب
         const restoreResult = await restoreStockOnReturn(
           lastPlacedOrder.id,
           lastPlacedOrder.items
         );
 
         if (restoreResult) {
-          // تم الإرجاع بنجاح، نخفي الطلب
           setLastPlacedOrder(null);
           toast({
             title: "تم إرجاع الطلب",
@@ -332,7 +326,6 @@ const Cart = () => {
         </motion.div>
       </div>
 
-      {/* Checkout Modal */}
       <AnimatePresence>
         {showCheckout && (
           <motion.div

@@ -158,20 +158,17 @@ const handleSaveProduct = async (productData: any) => {
     let response;
 
     if (editingProduct?._id) {
-      // UPDATE existing product
       response = await axios.put(
         `http://localhost:3000/api/v1/products/${editingProduct._id}`,
         productData
       );
       console.log("Product Update Response:", response.data);
     } else {
-      // CREATE new product
       response = await axios.post('http://localhost:3000/api/v1/products', productData);
       console.log("Product Create Response:", response.data);
     }
 
     if (response.data.status === 'success') {
-      // Refresh the products list
       await fetchProducts();
       setShowProductModal(false);
       setEditingProduct(null);
@@ -189,18 +186,14 @@ const handleSaveProduct = async (productData: any) => {
   const handleDeleteProduct = async (id: string) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
       try {
-        // Remove from UI immediately for better UX
         setManagedProducts(prev => prev.filter(p => (p._id || p.id) !== id));
 
-        // Then delete from backend
         await axios.delete(`http://localhost:3000/api/v1/products/${id}`);
 
-        // Fetch fresh list to ensure consistency
         await fetchProducts();
       } catch (err) {
         console.error("Error deleting product:", err);
         alert("Failed to delete product. Please try again.");
-        // Refresh the list if deletion failed
         await fetchProducts();
       }
     }
@@ -234,13 +227,12 @@ const handleSaveProduct = async (productData: any) => {
 
   const updateWorkerStat = async (worker: any, field: 'presentDays' | 'absentDays', increment: number) => {
     try {
-      const newValue = Math.max(0, (worker[field] || 0) + increment); // Prevent negative days
-      // Optimistic UI update
+      const newValue = Math.max(0, (worker[field] || 0) + increment);
       setWorkers(prev => prev.map(w => w._id === worker._id ? { ...w, [field]: newValue } : w));
       await axios.put(`http://localhost:3000/api/v1/workers/${worker._id}`, { [field]: newValue });
     } catch (err) {
       console.error(`Error updating ${field}:`, err);
-      await fetchWorkers(); // Revert on failure
+      await fetchWorkers();
     }
   };
 
@@ -248,7 +240,6 @@ const handleSaveProduct = async (productData: any) => {
     if (window.confirm(`هل تريدين تصفير حسابات وحضور (${worker.name}) لبدء شهر جديد؟`)) {
       try {
         const resetData = { presentDays: 0, absentDays: 0, deductions: 0 };
-        // Optimistic UI update
         setWorkers(prev => prev.map(w => w._id === worker._id ? { ...w, ...resetData } : w));
         await axios.put(`http://localhost:3000/api/v1/workers/${worker._id}`, resetData);
       } catch (err) {
@@ -291,7 +282,6 @@ const handleSaveProduct = async (productData: any) => {
       await fetchWholesaleOrders();
       await fetchFactoryClients();
         
-        // تحديث لحظي لبيانات العميل المفتوح حالياً ليظهر تعديل المديونية فوراً
         if (selectedClientDetails) {
            const clientRes = await axios.get(`http://localhost:3000/api/v1/factory-clients/${selectedClientDetails._id}`);
            if (clientRes.data.status === 'success') {
@@ -565,7 +555,6 @@ const handleSaveProduct = async (productData: any) => {
                   </>
                 ) : (
                   <>
-                    {/* Client Details View */}
                     <div>
                     <button onClick={() => setSelectedClientDetails(null)} className="flex items-center gap-2 text-xs font-body text-muted-foreground hover:text-foreground mb-6">
                       <ArrowLeft size={14}/> عودة لقائمة العملاء
@@ -681,7 +670,6 @@ const handleSaveProduct = async (productData: any) => {
                     </div>
                     </div>
 
-                  {/* Edit Wholesale Order Modal */}
                   <AnimatePresence>
                     {editWholesaleOrder && (
                       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-foreground/30 backdrop-blur-sm" onClick={() => setEditWholesaleOrder(null)}>
@@ -734,7 +722,6 @@ const handleSaveProduct = async (productData: any) => {
                     )}
                   </AnimatePresence>
 
-                  {/* Image Viewer Modal */}
                   <AnimatePresence>
                     {viewingImages && (
                       <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-background/90 backdrop-blur-sm" onClick={() => setViewingImages(null)}>
@@ -793,7 +780,6 @@ const handleSaveProduct = async (productData: any) => {
                       const netSalary = Math.max(0, (worker.salary || 0) - (worker.deductions || 0));
                       return (
                         <div key={worker._id} className="border border-border rounded-3xl p-5 bg-secondary/10 relative group">
-                          {/* Action Buttons */}
                           <div className="absolute top-4 right-4 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                             <button onClick={() => { setEditingWorker(worker); setShowWorkerModal(true); }} className="p-2 bg-background border border-border rounded-full text-muted-foreground hover:text-primary shadow-soft" title="تعديل">
                               <Edit size={14} />
@@ -803,7 +789,6 @@ const handleSaveProduct = async (productData: any) => {
                             </button>
                           </div>
 
-                          {/* Header */}
                           <div className="mb-4">
                             <h3 className="font-display text-xl text-foreground flex items-center gap-2">
                               {worker.name}
@@ -814,7 +799,6 @@ const handleSaveProduct = async (productData: any) => {
                             </div>
                           </div>
 
-                          {/* Financials */}
                           <div className="grid grid-cols-3 gap-2 mb-4 bg-background p-3 rounded-2xl border border-border/50 text-center">
                             <div>
                               <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">الراتب</p>
@@ -830,7 +814,6 @@ const handleSaveProduct = async (productData: any) => {
                             </div>
                           </div>
 
-                          {/* Attendance */}
                           <div className="flex items-center justify-between bg-background p-3 rounded-2xl border border-border/50 mb-4">
                             <div className="flex items-center gap-3">
                               <div className="flex items-center gap-2">
@@ -855,7 +838,6 @@ const handleSaveProduct = async (productData: any) => {
                             </div>
                           </div>
 
-                          {/* Notes & Reset */}
                           <div className="flex items-end justify-between mt-2">
                             <div className="flex-1 pr-4">
                               <p className="text-[11px] text-muted-foreground flex items-center gap-1 mb-1"><FileText size={12}/> ملاحظات:</p>

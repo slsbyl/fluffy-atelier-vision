@@ -48,7 +48,6 @@ const Index = () => {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
       <section ref={heroRef} className="relative h-screen overflow-hidden">
         <motion.div style={{ y: heroY }} className="absolute inset-0">
           <img
@@ -101,7 +100,6 @@ const Index = () => {
         </motion.div>
       </section>
 
-      {/* Featured Categories */}
       <section className="container mx-auto px-6 py-20">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -126,7 +124,6 @@ const Index = () => {
         )}
       </section>
 
-      {/* Collection Banner */}
       <section className="relative overflow-hidden">
         <motion.div
           initial={{ opacity: 0 }}
@@ -158,7 +155,6 @@ const Index = () => {
         </motion.div>
       </section>
 
-      {/* Best Sellers */}
       <section className="container mx-auto px-6 py-20">
         <motion.div
           initial={{ opacity: 0, y: 30 }}

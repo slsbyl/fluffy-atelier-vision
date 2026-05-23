@@ -13,7 +13,6 @@ const FactoryDashboard = () => {
   
   const [orders, setOrders] = useState<any[]>([]);
   
-  // New Order State
   const [productName, setProductName] = useState("");
   const [details, setDetails] = useState("");
   const [colors, setColors] = useState("");
@@ -31,7 +30,6 @@ const FactoryDashboard = () => {
 
   const fetchInitialData = async (clientId: string) => {
     try {
-      // Fetch updated client data to reflect immediate payments!
       const clientRes = await axios.get(`http://localhost:3000/api/v1/factory-clients/${clientId}`);
       if (clientRes.data.status === 'success') {
         setClient(clientRes.data.data.client);

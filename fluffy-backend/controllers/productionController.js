@@ -1,95 +1,68 @@
-const Production = require('../models/Production');
-const Product = require('../models/Product');
+class ProductionController {
+  constructor(productionService) {
+    this.productionService = productionService;
+  }
 
-exports.createProduction = async (req, res) => {
-  try {
-    const { product, productName, quantity, status } = req.body;
-
-    // Validate product exists
-    const productExists = await Product.findById(product);
-    if (!productExists) {
-      return res.status(404).json({
-        status: 'fail',
-        message: 'Product not found'
+  createProduction = async (req, res) => {
+    try {
+      const newProduction = await this.productionService.createProduction(req.body);
+      res.status(201).json({
+        status: 'success',
+        data: { production: newProduction }
       });
+    } catch (err) {
+      res.status(400).json({ status: 'fail', message: err.message });
     }
+  };
 
-    const newProduction = await Production.create({
-      product,
-      productName,
-      quantity,
-      status: status || 'Pending',
-      startDate: new Date()
-    });
-
-    res.status(201).json({
-      status: 'success',
-      data: { production: newProduction }
-    });
-  } catch (err) {
-    res.status(400).json({ status: 'fail', message: err.message });
-  }
-};
-
-exports.getAllProduction = async (req, res) => {
-  try {
-    const productions = await Production.find().sort({ createdAt: -1 });
-    res.status(200).json({
-      status: 'success',
-      results: productions.length,
-      data: { productions }
-    });
-  } catch (err) {
-    res.status(404).json({ status: 'fail', message: err.message });
-  }
-};
-
-exports.updateProduction = async (req, res) => {
-  try {
-    const production = await Production.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true, runValidators: true }
-    );
-
-    if (!production) {
-      return res.status(404).json({
-        status: 'fail',
-        message: 'Production record not found'
+  getAllProductions = async (req, res) => {
+    try {
+      const productions = await this.productionService.getAllProductions();
+      res.status(200).json({
+        status: 'success',
+        results: productions.length,
+        data: { productions }
       });
+    } catch (err) {
+      res.status(404).json({ status: 'fail', message: err.message });
     }
+  };
 
-    // If status changed to 'Finished', update product stock
-    if (req.body.status === 'Finished' && production.product) {
-      await Product.findByIdAndUpdate(
-        production.product,
-        { $inc: { stock: production.quantity } }
-      );
-    }
-
-    res.status(200).json({
-      status: 'success',
-      data: { production }
-    });
-  } catch (err) {
-    res.status(400).json({ status: 'fail', message: err.message });
-  }
-};
-
-exports.deleteProduction = async (req, res) => {
-  try {
-    const production = await Production.findByIdAndDelete(req.params.id);
-    if (!production) {
-      return res.status(404).json({
-        status: 'fail',
-        message: 'Production record not found'
+  getProduction = async (req, res) => {
+    try {
+      const production = await this.productionService.getProductionById(req.params.id);
+      res.status(200).json({
+        status: 'success',
+        data: { production }
       });
+    } catch (err) {
+      res.status(400).json({ status: 'fail', message: err.message });
     }
-    res.status(200).json({
-      status: 'success',
-      message: 'Production deleted successfully'
-    });
-  } catch (err) {
-    res.status(400).json({ status: 'fail', message: err.message });
-  }
-};
+  };
+
+  deleteProduction = async (req, res) => {
+    try {
+      await this.productionService.deleteProduction(req.params.id);
+      res.status(200).json({
+        status: 'success',
+        message: 'Production deleted successfully'
+      });
+    } catch (err) {
+      res.status(400).json({ status: 'fail', message: err.message });
+    }
+  };
+
+  updateProduction = async (req, res) => {
+    try {
+      const production = await this.productionService.updateProduction(req.params.id, req.body);
+      res.status(200).json({
+        status: 'success',
+        data: { production }
+      });
+    } catch (err) {
+      res.status(400).json({ status: 'fail', message: err.message });
+    }
+  };
+}
+
+module.exports = ProductionController;

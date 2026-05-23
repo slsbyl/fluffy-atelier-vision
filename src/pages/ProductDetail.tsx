@@ -59,14 +59,12 @@ const ProductDetail = () => {
   const [vtoResult, setVtoResult] = useState<string | null>(null);
   const { toast } = useToast();
 
-  // Fetch product from API
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        // 1. المحاولة الأولى: جلب المنتج مباشرة من الباك-إند
         try {
           const response = await axios.get(`http://localhost:3000/api/v1/products/${id}`);
           if (response.data?.status === 'success' || response.status === 200) {
@@ -81,8 +79,6 @@ const ProductDetail = () => {
           console.log("Single product fetch failed, trying fallback...");
         }
 
-        // 2. الخطة البديلة (لإنقاذ الديسكشن): جلب كل المنتجات واستخراج المنتج المطلوب
-        // (هذا يحل مشكلة عدم وجود مسار جلب منتج واحد في الباك-إند)
         try {
           const allResponse = await axios.get(`http://localhost:3000/api/v1/products`);
           if (allResponse.data?.status === 'success' || allResponse.status === 200) {
@@ -98,7 +94,6 @@ const ProductDetail = () => {
           console.log("Fetch all fallback failed.");
         }
 
-        // 3. المحاولة الأخيرة: المنتجات المحلية الثابتة
         const fallbackProduct = localProducts.find(p => String(p.id) === id);
         if (fallbackProduct) {
           setProduct(fallbackProduct);
@@ -118,7 +113,6 @@ const ProductDetail = () => {
     }
   }, [id]);
 
-  // حفظ التقييمات في ذاكرة المتصفح عند أي تغيير يحدث عليها
   useEffect(() => {
     if (id) {
       localStorage.setItem(`reviews_${id}`, JSON.stringify(reviews));
@@ -136,7 +130,6 @@ const ProductDetail = () => {
   };
 
   const handleAddToCart = () => {
-    // Check if all pieces have size (and color if available)
     const incompleteIdx = selections.findIndex(s => 
       (product.sizes && product.sizes.length > 0 && !s.size) || 
       (product.colors && product.colors.length > 0 && !s.color)
@@ -150,7 +143,6 @@ const ProductDetail = () => {
       return;
     }
 
-    // Check stock availability
     const availableStock = product.stock || 0;
 
     if (availableStock <= 0) {
@@ -175,7 +167,6 @@ const ProductDetail = () => {
       return;
     }
 
-    // Add each selected piece to cart
     selections.forEach(sel => {
       addItem({
         productId: product._id || product.id,
@@ -194,7 +185,6 @@ const ProductDetail = () => {
       description: `تم إضافة ${selections.length} قطعة من ${product.name} إلى السلة.`,
     });
 
-    // Reset
     setSelections([{ size: null, color: null }]);
   };
 
@@ -234,7 +224,6 @@ const ProductDetail = () => {
       
       let finalProductImage = activeImage || product.image;
       
-      // تحويل صورة المنتج لـ Base64 لضمان قراءتها بواسطة Replicate
       try {
         const urlToFetch = finalProductImage.startsWith('/') ? window.location.origin + finalProductImage : finalProductImage;
         const res = await fetch(urlToFetch);
@@ -356,7 +345,6 @@ const ProductDetail = () => {
             <p className="font-display text-2xl text-foreground mb-6">${product.price}</p>
             <p className="font-body text-sm text-muted-foreground leading-relaxed mb-8">{product.description}</p>
 
-            {/* Selections for each piece */}
             <div className="space-y-4 mb-8">
               <div className="flex items-center justify-between mb-2">
                 <p className="text-xs font-body tracking-wider uppercase text-muted-foreground">الكمية والمواصفات لكل قطعة</p>
@@ -384,7 +372,6 @@ const ProductDetail = () => {
                   <div key={idx} className="bg-secondary/30 p-4 rounded-2xl border border-border/50 relative">
                     <span className="absolute top-3 left-4 text-xs font-display text-muted-foreground">#{idx + 1}</span>
                     
-                    {/* Size Selection */}
                     {product.sizes && product.sizes.length > 0 && (
                       <div className="mb-3 mt-1">
                         <p className="text-[11px] font-body text-muted-foreground mb-2">المقاس:</p>
@@ -402,7 +389,6 @@ const ProductDetail = () => {
                       </div>
                     )}
 
-                    {/* Color Selection */}
                     {product.colors && product.colors.length > 0 && (
                       <div>
                         <p className="text-[11px] font-body text-muted-foreground mb-2">اللون:</p>
@@ -462,11 +448,10 @@ const ProductDetail = () => {
                 className="w-full rounded-full font-body h-14 bg-gradient-to-r from-pink-50 to-purple-50 hover:from-pink-100 hover:to-purple-100 text-foreground border border-pink-100 shadow-sm transition-all"
                 onClick={() => setShowVtoModal(true)}
               >
-                <Sparkles className="mr-2 text-primary" size={18} /> تجربة القياس بالذكاء الاصطناعي ✨
+                <Sparkles className="mr-2 text-primary" size={18} /> تجربة القياس بالذكاء الاصطناعي
               </Button>
             </div>
 
-            {/* Reviews section */}
             <div className="mt-12 pt-8 border-t border-border">
               <h3 className="font-display text-xl mb-4">تقييمات العملاء</h3>
               <div className="space-y-4 mb-8">
@@ -489,7 +474,6 @@ const ProductDetail = () => {
                 )}
               </div>
 
-              {/* Leave a Review */}
               <div className="bg-secondary/20 rounded-2xl p-5">
                 <h4 className="font-display text-base text-foreground mb-4">اترك تقييمك</h4>
                 <form onSubmit={handleSubmitReview} className="space-y-3">
@@ -518,7 +502,6 @@ const ProductDetail = () => {
           </motion.div>
         </div>
 
-        {/* AI Virtual Try-On Modal */}
         <AnimatePresence>
           {showVtoModal && (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm" onClick={() => !vtoLoading && setShowVtoModal(false)}>

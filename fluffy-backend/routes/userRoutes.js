@@ -1,9 +1,10 @@
 const express = require('express');
-const authController = require('../controllers/authController');
+const container = require('../container');
 
+const authController = container.resolve('AuthController');
 const router = express.Router();
 
 router.post('/signup', authController.signup);
-router.post('/login', authController.login); // السطر الجديد
+router.post('/login', authController.login);
 
 module.exports = router;

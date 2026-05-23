@@ -12,7 +12,7 @@ const vtoRouter = require('./routes/vtoRoutes');
 dotenv.config();
 const app = express();
 
-// Order matters! Parse body BEFORE routes
+
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(cors());
@@ -37,7 +37,7 @@ app.get('/', (req, res) => {
   res.send('Fluffy Backend is Running!');
 });
 
-// Global error handling middleware - MUST be last
+
 app.use((err, req, res, next) => {
   console.error('Global Error Handler:', err.stack);
   res.status(err.status || 500).json({

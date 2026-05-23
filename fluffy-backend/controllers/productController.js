@@ -1,112 +1,68 @@
-const Product = require('../models/Product');
-
-exports.createProduct = async (req, res) => {
-  try {
-    console.log("Creating product with data:", req.body);
-    const newProduct = await Product.create(req.body);
-    console.log("Product created successfully:", newProduct);
-    res.status(201).json({
-      status: 'success',
-      data: { product: newProduct }
-    });
-  } catch (err) {
-    console.error("Error creating product:", err);
-    res.status(400).json({ status: 'fail', message: err.message });
+class ProductController {
+  constructor(productService) {
+    this.productService = productService;
   }
-};
 
-exports.getAllProducts = async (req, res) => {
-  try {
-    const products = await Product.find();
-    
-    // Add inStock flag to each product
-    const productsWithStock = products.map(p => {
-      const productObj = p.toObject ? p.toObject() : p;
-      return {
-        ...productObj,
-        inStock: productObj.stock > 0
-      };
-    });
-    
-    res.status(200).json({
-      status: 'success',
-      results: productsWithStock.length,
-      data: { products: productsWithStock }
-    });
-  } catch (err) {
-    res.status(404).json({ status: 'fail', message: err.message });
-  }
-};
-
-exports.getProduct = async (req, res) => {
-  try {
-    const product = await Product.findById(req.params.id);
-    if (!product) {
-      return res.status(404).json({
-        status: 'fail',
-        message: 'Product not found'
+  createProduct = async (req, res) => {
+    try {
+      const newProduct = await this.productService.createProduct(req.body);
+      res.status(201).json({
+        status: 'success',
+        data: { product: newProduct }
       });
+    } catch (err) {
+      res.status(400).json({ status: 'fail', message: err.message });
     }
-    
-    // Add inStock flag
-    const productObj = product.toObject ? product.toObject() : product;
-    const productWithStock = {
-      ...productObj,
-      inStock: productObj.stock > 0
-    };
-    
-    res.status(200).json({
-      status: 'success',
-      data: { product: productWithStock }
-    });
-  } catch (err) {
-    res.status(400).json({ status: 'fail', message: err.message });
-  }
-};
+  };
 
-exports.deleteProduct = async (req, res) => {
-  try {
-    const product = await Product.findByIdAndDelete(req.params.id);
-    if (!product) {
-      return res.status(404).json({
-        status: 'fail',
-        message: 'Product not found'
+  getAllProducts = async (req, res) => {
+    try {
+      const products = await this.productService.getAllProducts();
+      res.status(200).json({
+        status: 'success',
+        results: products.length,
+        data: { products }
       });
+    } catch (err) {
+      res.status(404).json({ status: 'fail', message: err.message });
     }
-    res.status(200).json({
-      status: 'success',
-      message: 'Product deleted successfully'
-    });
-  } catch (err) {
-    res.status(400).json({ status: 'fail', message: err.message });
-  }
-};
+  };
 
-exports.updateProduct = async (req, res) => {
-  try {
-    const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true
-    });
-    if (!product) {
-      return res.status(404).json({
-        status: 'fail',
-        message: 'Product not found'
+  getProduct = async (req, res) => {
+    try {
+      const product = await this.productService.getProductById(req.params.id);
+      res.status(200).json({
+        status: 'success',
+        data: { product }
       });
+    } catch (err) {
+      res.status(400).json({ status: 'fail', message: err.message });
     }
-    
-    // Add inStock flag
-    const productObj = product.toObject ? product.toObject() : product;
-    const productWithStock = {
-      ...productObj,
-      inStock: productObj.stock > 0
-    };
-    
-    res.status(200).json({
-      status: 'success',
-      data: { product: productWithStock }
-    });
-  } catch (err) {
-    res.status(400).json({ status: 'fail', message: err.message });
-  }
-};
+  };
+
+  deleteProduct = async (req, res) => {
+    try {
+      await this.productService.deleteProduct(req.params.id);
+      res.status(200).json({
+        status: 'success',
+        message: 'Product deleted successfully'
+      });
+    } catch (err) {
+      res.status(400).json({ status: 'fail', message: err.message });
+    }
+  };
+
+  updateProduct = async (req, res) => {
+    try {
+      const product = await this.productService.updateProduct(req.params.id, req.body);
+      res.status(200).json({
+        status: 'success',
+        data: { product }
+      });
+    } catch (err) {
+      res.status(400).json({ status: 'fail', message: err.message });
+    }
+  };
+}
+
+module.exports = ProductController;

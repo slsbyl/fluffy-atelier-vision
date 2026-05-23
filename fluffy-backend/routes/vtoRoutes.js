@@ -1,6 +1,7 @@
 const express = require('express');
-const vtoController = require('../controllers/vtoController');
+const container = require('../container');
 
+const vtoController = container.resolve('VTOController');
 const router = express.Router();
 
 router.post('/', vtoController.tryOn);

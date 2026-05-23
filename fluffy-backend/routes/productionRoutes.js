@@ -1,12 +1,15 @@
 const express = require('express');
-const productionController = require('../controllers/productionController');
+const container = require('../container');
+
+const productionController = container.resolve('ProductionController');
 const router = express.Router();
 
 router.route('/')
-  .get(productionController.getAllProduction)
+  .get(productionController.getAllProductions)
   .post(productionController.createProduction);
 
 router.route('/:id')
+  .get(productionController.getProduction)
   .patch(productionController.updateProduction)
   .delete(productionController.deleteProduction);
 

@@ -1,12 +1,11 @@
 class OrderController {
-  // Dependency Injection: OrderService is injected via constructor
   constructor(orderService) {
     this.orderService = orderService;
   }
 
   createOrder = async (req, res) => {
     try {
-      const newOrder = await this.orderService.createOrder(req.body);
+      const newOrder = await this.orderService.createOrder(req.query);
       res.status(201).json({
         status: 'success',
         data: { order: newOrder }

@@ -5,11 +5,10 @@ async function testTryOn() {
     const client = await Client.connect("yisol/IDM-VTON", { hf_token: "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" });
     console.log("Connected to yisol/IDM-VTON");
     
-    // Some sample URLs from Replicate docs to test
     const personUrl = "https://replicate.delivery/pbxt/MjVIo8ENgFG5SBbMep5WKSJFakH3AxBX9YDzROldiNVK53VK/model%201.jpg";
     const garmentUrl = "https://replicate.delivery/pbxt/MjVInxdHWaHcHcbQcmiEyf7vm9gMwo59uItGH3vYAaK1G1ir/example_jacket.png";
 
-    // Try fetching them into blobs as Gradio client usually works better with Blobs
+  
     const personRes = await fetch(personUrl);
     const personBlob = await personRes.blob();
     const garmentRes = await fetch(garmentUrl);

@@ -30,7 +30,6 @@ const AddClientModal = ({ open, onClose, onSave }: AddClientModalProps) => {
       password
     });
     setIsLoading(false);
-    // Reset Form
     setCompanyName(""); setOwnerName(""); setPhone(""); setUsername(""); setPassword("");
     onClose();
   };
