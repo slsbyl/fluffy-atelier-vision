@@ -1,5 +1,7 @@
 const express = require('express');
-const productController = require('../controllers/productController');
+const container = require('../container');
+
+const productController = container.resolve('ProductController');
 const router = express.Router();
 
 router.route('/')

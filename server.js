@@ -15,10 +15,7 @@ app.use((req, res, next) => {
   next();
 });
 
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/fluffy', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/fluffy')
 .then(() => console.log('تم الاتصال بقاعدة بيانات MongoDB بنجاح'))
 .catch(err => console.error('خطأ في الاتصال بقاعدة بيانات MongoDB:', err));
 

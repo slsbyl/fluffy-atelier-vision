@@ -1,5 +1,7 @@
 const express = require('express');
-const clientController = require('../controllers/clientController');
+const container = require('../container');
+
+const clientController = container.resolve('ClientController');
 const router = express.Router();
 
 router.route('/')

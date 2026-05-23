@@ -1,9 +1,7 @@
 const express = require('express');
 const container = require('../container');
 
-
 const orderController = container.resolve('OrderController');
-
 const router = express.Router();
 
 router.route('/')

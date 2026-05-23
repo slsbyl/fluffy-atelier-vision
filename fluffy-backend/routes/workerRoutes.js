@@ -1,5 +1,7 @@
 const express = require('express');
-const workerController = require('../controllers/workerController');
+const container = require('../container');
+
+const workerController = container.resolve('WorkerController');
 const router = express.Router();
 
 router.route('/')
