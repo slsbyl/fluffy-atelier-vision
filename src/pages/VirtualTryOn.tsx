@@ -45,7 +45,7 @@ const VirtualTryOn = () => {
         console.error("Failed to convert product image", err);
       }
 
-      const response = await axios.post("http://localhost:3000/api/v1/vto", {
+      const response = await axios.post("https://fluffy-atelier-vision-production.up.railway.app/api/v1/vto", {
         humanImage: uploadedPhoto,
         productImage: finalProductImage,
         category: selectedProduct.category

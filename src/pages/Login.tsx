@@ -14,7 +14,7 @@ const Login = () => {
 const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
   try {
-    const response = await axios.post('http://localhost:3000/api/v1/users/login', {
+    const response = await axios.post('https://fluffy-atelier-vision-production.up.railway.app/api/v1/users/login', {
       email: email.trim().toLowerCase(),
       password,
     });

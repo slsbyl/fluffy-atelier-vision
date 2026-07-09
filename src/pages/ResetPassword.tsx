@@ -31,7 +31,7 @@ const ResetPassword = () => {
     setMessage("");
 
     try {
-      const response = await axios.patch(`http://localhost:3000/api/v1/users/reset-password/${token}`, {
+      const response = await axios.patch(`https://fluffy-atelier-vision-production.up.railway.app/api/v1/users/reset-password/${token}`, {
         password,
         passwordConfirm,
       });

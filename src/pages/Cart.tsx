@@ -51,7 +51,7 @@ const Cart = () => {
   const finalTotal = total + shippingFee;
 
   useEffect(() => {
-    axios.get('http://localhost:3000/api/v1/shipping-rates')
+    axios.get('https://fluffy-atelier-vision-production.up.railway.app/api/v1/shipping-rates')
       .then(res => {
         if (res.data.status === 'success') {
           setShippingRates(res.data.data.rates);
@@ -102,7 +102,7 @@ const Cart = () => {
         total: finalTotal,
       };
 
-      const res = await axios.post('http://localhost:3000/api/v1/orders', orderData);
+      const res = await axios.post('https://fluffy-atelier-vision-production.up.railway.app/api/v1/orders', orderData);
 
       if (res.data.status === 'success') {
         setLastPlacedOrder({

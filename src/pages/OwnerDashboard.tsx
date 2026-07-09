@@ -80,7 +80,7 @@ const OwnerDashboard = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/v1/products');
+      const response = await axios.get('https://fluffy-atelier-vision-production.up.railway.app/api/v1/products');
       if (response.data.status === 'success') {
         setManagedProducts(response.data.data.products);
       }
@@ -91,7 +91,7 @@ const OwnerDashboard = () => {
 
   const fetchOrders = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/v1/orders');
+      const response = await axios.get('https://fluffy-atelier-vision-production.up.railway.app/api/v1/orders');
       if (response.data.status === 'success') {
         setOrders(response.data.data.orders);
       }
@@ -102,7 +102,7 @@ const OwnerDashboard = () => {
 
   const fetchWorkers = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/v1/workers');
+      const response = await axios.get('https://fluffy-atelier-vision-production.up.railway.app/api/v1/workers');
       if (response.data.status === 'success') {
         setWorkers(response.data.data.workers);
       }
@@ -113,7 +113,7 @@ const OwnerDashboard = () => {
 
   const fetchFactoryClients = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/v1/factory-clients');
+      const response = await axios.get('https://fluffy-atelier-vision-production.up.railway.app/api/v1/factory-clients');
       if (response.data.status === 'success') {
         setFactoryClients(response.data.data.clients);
       }
@@ -124,7 +124,7 @@ const OwnerDashboard = () => {
 
   const fetchWholesaleOrders = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/v1/wholesale-orders');
+      const response = await axios.get('https://fluffy-atelier-vision-production.up.railway.app/api/v1/wholesale-orders');
       if (response.data.status === 'success') {
         setWholesaleOrders(response.data.data.orders);
       }
@@ -135,7 +135,7 @@ const OwnerDashboard = () => {
 
   const fetchShippingRates = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/v1/shipping-rates');
+      const response = await axios.get('https://fluffy-atelier-vision-production.up.railway.app/api/v1/shipping-rates');
       if (response.data.status === 'success') {
         setShippingRates(response.data.data.rates || {});
       }
@@ -159,12 +159,12 @@ const handleSaveProduct = async (productData: any) => {
 
     if (editingProduct?._id) {
       response = await axios.put(
-        `http://localhost:3000/api/v1/products/${editingProduct._id}`,
+        `https://fluffy-atelier-vision-production.up.railway.app/api/v1/products/${editingProduct._id}`,
         productData
       );
       console.log("Product Update Response:", response.data);
     } else {
-      response = await axios.post('http://localhost:3000/api/v1/products', productData);
+      response = await axios.post('https://fluffy-atelier-vision-production.up.railway.app/api/v1/products', productData);
       console.log("Product Create Response:", response.data);
     }
 
@@ -188,7 +188,7 @@ const handleSaveProduct = async (productData: any) => {
       try {
         setManagedProducts(prev => prev.filter(p => (p._id || p.id) !== id));
 
-        await axios.delete(`http://localhost:3000/api/v1/products/${id}`);
+        await axios.delete(`https://fluffy-atelier-vision-production.up.railway.app/api/v1/products/${id}`);
 
         await fetchProducts();
       } catch (err) {
@@ -202,9 +202,9 @@ const handleSaveProduct = async (productData: any) => {
   const handleSaveWorker = async (workerData: any) => {
     try {
       if (workerData._id) {
-        await axios.put(`http://localhost:3000/api/v1/workers/${workerData._id}`, workerData);
+        await axios.put(`https://fluffy-atelier-vision-production.up.railway.app/api/v1/workers/${workerData._id}`, workerData);
       } else {
-        await axios.post('http://localhost:3000/api/v1/workers', workerData);
+        await axios.post('https://fluffy-atelier-vision-production.up.railway.app/api/v1/workers', workerData);
       }
       await fetchWorkers();
     } catch (err) {
@@ -217,7 +217,7 @@ const handleSaveProduct = async (productData: any) => {
     if (window.confirm("هل أنت متأكد من حذف هذا العامل نهائياً؟")) {
       try {
         setWorkers(prev => prev.filter(w => w._id !== id));
-        await axios.delete(`http://localhost:3000/api/v1/workers/${id}`);
+        await axios.delete(`https://fluffy-atelier-vision-production.up.railway.app/api/v1/workers/${id}`);
       } catch (err) {
         console.error("Error deleting worker:", err);
         await fetchWorkers();
@@ -229,7 +229,7 @@ const handleSaveProduct = async (productData: any) => {
     try {
       const newValue = Math.max(0, (worker[field] || 0) + increment);
       setWorkers(prev => prev.map(w => w._id === worker._id ? { ...w, [field]: newValue } : w));
-      await axios.put(`http://localhost:3000/api/v1/workers/${worker._id}`, { [field]: newValue });
+      await axios.put(`https://fluffy-atelier-vision-production.up.railway.app/api/v1/workers/${worker._id}`, { [field]: newValue });
     } catch (err) {
       console.error(`Error updating ${field}:`, err);
       await fetchWorkers();
@@ -241,7 +241,7 @@ const handleSaveProduct = async (productData: any) => {
       try {
         const resetData = { presentDays: 0, absentDays: 0, deductions: 0 };
         setWorkers(prev => prev.map(w => w._id === worker._id ? { ...w, ...resetData } : w));
-        await axios.put(`http://localhost:3000/api/v1/workers/${worker._id}`, resetData);
+        await axios.put(`https://fluffy-atelier-vision-production.up.railway.app/api/v1/workers/${worker._id}`, resetData);
       } catch (err) {
         console.error("Error resetting worker:", err);
         await fetchWorkers();
@@ -251,7 +251,7 @@ const handleSaveProduct = async (productData: any) => {
 
   const handleSaveClient = async (clientData: any) => {
     try {
-      await axios.post('http://localhost:3000/api/v1/factory-clients', clientData);
+      await axios.post('https://fluffy-atelier-vision-production.up.railway.app/api/v1/factory-clients', clientData);
       await fetchFactoryClients();
     } catch (err: any) {
       alert(err.response?.data?.message || "فشل في حفظ العميل.");
@@ -263,7 +263,7 @@ const handleSaveProduct = async (productData: any) => {
     const amount = window.prompt(`أدخلي المبلغ الذي سدده العميل:`);
     if (amount && !isNaN(Number(amount)) && Number(amount) > 0) {
       try {
-        await axios.post(`http://localhost:3000/api/v1/factory-clients/${clientId}/payment`, { amount });
+        await axios.post(`https://fluffy-atelier-vision-production.up.railway.app/api/v1/factory-clients/${clientId}/payment`, { amount });
         alert("تم تسجيل الدفعة بنجاح، وتم تحديث رصيد العميل اللحظي.");
         await fetchFactoryClients();
         if(selectedClientDetails) {
@@ -277,13 +277,13 @@ const handleSaveProduct = async (productData: any) => {
 
   const updateWholesaleOrder = async (orderId: string, updates: any) => {
     try {
-      await axios.put(`http://localhost:3000/api/v1/wholesale-orders/${orderId}`, updates);
+      await axios.put(`https://fluffy-atelier-vision-production.up.railway.app/api/v1/wholesale-orders/${orderId}`, updates);
       setEditWholesaleOrder(null);
       await fetchWholesaleOrders();
       await fetchFactoryClients();
         
         if (selectedClientDetails) {
-           const clientRes = await axios.get(`http://localhost:3000/api/v1/factory-clients/${selectedClientDetails._id}`);
+           const clientRes = await axios.get(`https://fluffy-atelier-vision-production.up.railway.app/api/v1/factory-clients/${selectedClientDetails._id}`);
            if (clientRes.data.status === 'success') {
              setSelectedClientDetails(clientRes.data.data.client);
            }
@@ -307,7 +307,7 @@ const handleSaveProduct = async (productData: any) => {
 
   const saveShippingRates = async () => {
     try {
-      await axios.put('http://localhost:3000/api/v1/shipping-rates', { rates: shippingRates });
+      await axios.put('https://fluffy-atelier-vision-production.up.railway.app/api/v1/shipping-rates', { rates: shippingRates });
       alert("تم حفظ أسعار التوصيل بنجاح!");
     } catch (err) {
       alert("فشل في حفظ أسعار التوصيل.");

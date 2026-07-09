@@ -18,7 +18,7 @@ const SignUp = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const response = await axios.post('http://localhost:3000/api/v1/users/signup', {
+      const response = await axios.post('https://fluffy-atelier-vision-production.up.railway.app/api/v1/users/signup', {
         name,
         email: email.trim().toLowerCase(),
         phone,

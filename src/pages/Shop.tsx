@@ -19,7 +19,7 @@ const Shop = () => {
         setLoading(true);
         setError(null);
 
-        const response = await axios.get('http://localhost:3000/api/v1/products');
+        const response = await axios.get('https://fluffy-atelier-vision-production.up.railway.app/api/v1/products');
 
         if (response.data.status === 'success') {
           const transformedProducts: Product[] = response.data.data.products.map((item: any) => ({

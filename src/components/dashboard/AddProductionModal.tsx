@@ -36,7 +36,7 @@ const AddProductionModal = ({ open, onClose, onSave, editRecord }: AddProduction
   const fetchProducts = async () => {
     try {
       setFetchingProducts(true);
-      const response = await axios.get('http://localhost:3000/api/v1/products');
+      const response = await axios.get('https://fluffy-atelier-vision-production.up.railway.app/api/v1/products');
       if (response.data.status === 'success') {
         setProducts(response.data.data.products);
       }
