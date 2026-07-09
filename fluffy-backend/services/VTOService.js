@@ -1,5 +1,3 @@
-const { Client } = require("@gradio/client");
-
 class VTOService {
   async tryOn(humanImage, productImage, category) {
     if (!humanImage || !productImage) {
@@ -17,6 +15,9 @@ class VTOService {
 
     const personBlob = await getBlobFromUrlOrBase64(humanImage);
     const garmentBlob = await getBlobFromUrlOrBase64(productImage);
+
+   
+    const { Client } = await import("@gradio/client");
 
     const client = await Client.connect("fashn-ai/fashn-vton-1.5", { 
       hf_token: process.env.HUGGINGFACE_API_KEY || "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" 
@@ -55,5 +56,6 @@ class VTOService {
     return resultImage;
   }
 }
+
 
 module.exports = VTOService;
