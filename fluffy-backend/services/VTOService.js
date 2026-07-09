@@ -1,4 +1,4 @@
-const { Client } = require("@gradio/client");
+import { Client } from "@gradio/client";
 
 class VTOService {
   async tryOn(humanImage, productImage, category) {
