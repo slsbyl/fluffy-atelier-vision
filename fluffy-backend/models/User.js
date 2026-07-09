@@ -25,21 +25,18 @@ const userSchema = new mongoose.Schema({
   },
   createdAt: {
     type: Date,
-    default: Date.now(),
+    default: Date.now,
   }
 });
 
-userSchema.pre('save', function(next) {
-  if (!this.isModified('password')) {
-    return next();
-  }
+userSchema.pre('save', async function() {
+  if (!this.isModified('password')) return;
 
-  bcrypt.hash(this.password, 12).then(hashedPassword => {
-    this.password = hashedPassword;
-    next();
-  }).catch(err => {
-    next(err);
-  });
+  try {
+    this.password = await bcrypt.hash(this.password, 12);
+  } catch (err) {
+    throw new Error(err);
+  }
 });
 
 userSchema.methods.correctPassword = async function(candidatePassword, userPassword) {
