@@ -9,18 +9,6 @@ import nodemailer from 'nodemailer';
 import jwt from 'jsonwebtoken';
 const router = express.Router();
 
-// CORS Configuration
-const corsOptions = {
-  // Make sure this is the correct URL for your frontend
-  origin: process.env.FRONTEND_URL || 'http://localhost:8080', 
-  credentials: true,
-  optionsSuccessStatus: 200 // For legacy browser support
-};
-
-// This should be applied to your app instance, not the router.
-// Assuming you have an `app` variable like `const app = express();`
-// You would use it like this: app.use(cors(corsOptions));
-
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET || 'a-very-long-and-secure-secret-for-dev', { expiresIn: process.env.JWT_EXPIRES_IN || '90d' });
 };
@@ -118,7 +106,8 @@ const workerSchema = new mongoose.Schema({
   deductions: { type: Number, default: 0 },
   presentDays: { type: Number, default: 0 },
   absentDays: { type: Number, default: 0 },
-  notes: { type: String, default: '' }
+  notes: { type: String, default: '' },
+  phone: { type: String }
 }, { timestamps: true });
 
 const Worker = mongoose.model('Worker', workerSchema);
@@ -413,6 +402,11 @@ router.post('/workers', async (req, res) => {
     const savedWorker = await newWorker.save(); // The schema has timestamps: true, so createdAt/updatedAt are automatic
     res.status(201).json({ status: 'success', data: { worker: savedWorker } });
   } catch (error) {
+    if (error.name === 'ValidationError') {
+      const messages = Object.values(error.errors).map(val => val.message).join(', ');
+      return res.status(400).json({ status: 'fail', message: `فشل التحقق: ${messages}` });
+    }
+    console.error("Error adding worker:", error);
     res.status(500).json({ status: 'error', message: 'خطأ في إضافة العامل' });
   }
 });
@@ -1099,6 +1093,11 @@ router.post('/factory-clients', async (req, res) => {
     res.status(201).json({ status: 'success', data: { client: newClient } });
   } catch (error) {
     if(error.code === 11000) return res.status(400).json({ status: 'error', message: 'اسم المستخدم (Username) مستخدم بالفعل' });
+    if (error.name === 'ValidationError') {
+      const messages = Object.values(error.errors).map(val => val.message).join(', ');
+      return res.status(400).json({ status: 'fail', message: `فشل التحقق: ${messages}` });
+    }
+    console.error("Error adding factory client:", error);
     res.status(500).json({ status: 'error', message: 'خطأ في إضافة العميل' });
   }
 });

@@ -1,7 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import { router as apiRouter, Product, Order, User } from './COMPLETE_BACKEND_CODE.js'; // استيراد الراوتر والنماذج من الملف الموحد
+import { router as apiRouter, Product, Order, User, Worker, FactoryClient, WholesaleOrder } from './COMPLETE_BACKEND_CODE.js'; // استيراد الراوتر والنماذج من الملف الموحد
 import cors from 'cors';
 
 dotenv.config();
@@ -13,8 +13,24 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // إعدادات CORS الصحيحة للسماح بالطلبات مع credentials
+const allowedOrigins = [
+  'http://localhost:8080', // منفذ شائع
+  'http://localhost:3000', // منفذ Create React App
+  'http://localhost:5173', // منفذ Vite
+];
+
+if (process.env.FRONTEND_URL) {
+  allowedOrigins.push(process.env.FRONTEND_URL);
+}
+
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || 'http://localhost:8080', 
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   optionsSuccessStatus: 200
 };
