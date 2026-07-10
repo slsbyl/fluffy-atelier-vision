@@ -338,7 +338,7 @@ router.put('/products/:id', async (req, res) => {
         images: images || (image ? [image] : []),
         category,
         sizes: sizes || [],
-      colors: colors || [],
+        colors: colors || [],
         stock: stock || 0,
         brand
       },
