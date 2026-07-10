@@ -13,6 +13,13 @@ const orderSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Phone is required']
   },
+  governorate: {
+    type: String,
+  },
+  shippingFee: {
+    type: Number,
+    default: 0
+  },
   items: [
     {
       productId: {
@@ -48,12 +55,13 @@ const orderSchema = new mongoose.Schema({
 orderSchema.pre('save', function(next) {
   try {
     if (this.items && Array.isArray(this.items)) {
-      this.totalAmount = this.items.reduce((total, item) => {
+      const subtotal = this.items.reduce((total, item) => {
         const itemTotal = (item.price || 0) * (item.quantity || 0);
         return total + itemTotal;
       }, 0);
+      this.totalAmount = subtotal + (this.shippingFee || 0);
     } else {
-      this.totalAmount = 0;
+      this.totalAmount = this.shippingFee || 0;
     }
     next();
   } catch (err) {
