@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X } from "lucide-react";
+import { X, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 interface AddClientModalProps {
   open: boolean;
   onClose: () => void;
-  onSave: (client: any) => void;
+  onSave: (client: any) => Promise<void>;
 }
 
 const AddClientModal = ({ open, onClose, onSave }: AddClientModalProps) => {
@@ -18,20 +18,32 @@ const AddClientModal = ({ open, onClose, onSave }: AddClientModalProps) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (open) {
+      setCompanyName("");
+      setOwnerName("");
+      setPhone("");
+      setUsername("");
+      setPassword("");
+      setError(null);
+      setIsLoading(false);
+    }
+  }, [open]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    await onSave({
-      companyName,
-      ownerName,
-      phone,
-      username,
-      password
-    });
-    setIsLoading(false);
-    setCompanyName(""); setOwnerName(""); setPhone(""); setUsername(""); setPassword("");
-    onClose();
+    setError(null);
+    try {
+      setIsLoading(true);
+      await onSave({ companyName, ownerName, phone, username, password });
+      onClose();
+    } catch (err: any) {
+      setError(err.message || "Failed to save client");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -60,6 +72,12 @@ const AddClientModal = ({ open, onClose, onSave }: AddClientModalProps) => {
               </button>
             </div>
 
+            {error && (
+              <div className="mb-4 p-3 rounded-xl bg-destructive/10 border border-destructive/30 flex items-start gap-2">
+                <AlertCircle size={16} className="text-destructive mt-0.5 flex-shrink-0" />
+                <p className="text-xs font-body text-destructive">{error}</p>
+              </div>
+            )}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>

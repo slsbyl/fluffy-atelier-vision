@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X } from "lucide-react";
+import { X, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,20 +8,21 @@ import { Label } from "@/components/ui/label";
 interface AddWorkerModalProps {
   open: boolean;
   onClose: () => void;
-  onSave: (worker: any) => void;
+  onSave: (worker: any) => Promise<void>;
   editWorker?: any;
 }
 
 const AddWorkerModal = ({ open, onClose, onSave, editWorker }: AddWorkerModalProps) => {
-  const [name, setName] = useState(editWorker?.name || "");
-  const [role, setRole] = useState(editWorker?.role || "");
-  const [salary, setSalary] = useState(editWorker?.salary?.toString() || "");
-  const [startDate, setStartDate] = useState(editWorker?.startDate || "");
-  const [phone, setPhone] = useState(editWorker?.phone || "");
-  const [deductions, setDeductions] = useState(editWorker?.deductions?.toString() || "0");
+  const [name, setName] = useState("");
+  const [role, setRole] = useState("");
+  const [salary, setSalary] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [phone, setPhone] = useState("");
+  const [deductions, setDeductions] = useState("0");
   const [newDeduction, setNewDeduction] = useState("");
-  const [notes, setNotes] = useState(editWorker?.notes || "");
+  const [notes, setNotes] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (open) {
@@ -33,6 +34,8 @@ const AddWorkerModal = ({ open, onClose, onSave, editWorker }: AddWorkerModalPro
       setDeductions(editWorker?.deductions?.toString() || "0");
       setNewDeduction("");
       setNotes(editWorker?.notes || "");
+      setError(null);
+      setIsLoading(false);
     }
   }, [open, editWorker]);
 
@@ -44,19 +47,25 @@ const AddWorkerModal = ({ open, onClose, onSave, editWorker }: AddWorkerModalPro
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    await onSave({
-      _id: editWorker?._id,
-      name,
-      role,
-      salary: currentSalary,
-      startDate,
-      phone,
-      deductions: finalDeductions,
-      notes
-    });
-    setIsLoading(false);
-    onClose();
+    setError(null);
+    try {
+      setIsLoading(true);
+      await onSave({
+        _id: editWorker?._id,
+        name,
+        role,
+        salary: currentSalary,
+        startDate,
+        phone,
+        deductions: finalDeductions,
+        notes
+      });
+      onClose();
+    } catch (err: any) {
+      setError(err.message || "Failed to save worker");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -85,6 +94,12 @@ const AddWorkerModal = ({ open, onClose, onSave, editWorker }: AddWorkerModalPro
               </button>
             </div>
 
+            {error && (
+              <div className="mb-4 p-3 rounded-xl bg-destructive/10 border border-destructive/30 flex items-start gap-2">
+                <AlertCircle size={16} className="text-destructive mt-0.5 flex-shrink-0" />
+                <p className="text-xs font-body text-destructive">{error}</p>
+              </div>
+            )}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <Label className="text-xs font-body tracking-wider uppercase text-muted-foreground">Worker Name</Label>
