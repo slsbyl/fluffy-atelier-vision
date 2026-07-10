@@ -1,12 +1,25 @@
 
 import express from 'express';
 import mongoose from 'mongoose';
+import cors from 'cors';
 import bcrypt from 'bcryptjs';
 import crypto from 'node:crypto';
 import { Client } from '@gradio/client';
 import nodemailer from 'nodemailer';
 import jwt from 'jsonwebtoken';
 const router = express.Router();
+
+// CORS Configuration
+const corsOptions = {
+  // Make sure this is the correct URL for your frontend
+  origin: process.env.FRONTEND_URL || 'http://localhost:8080', 
+  credentials: true,
+  optionsSuccessStatus: 200 // For legacy browser support
+};
+
+// This should be applied to your app instance, not the router.
+// Assuming you have an `app` variable like `const app = express();`
+// You would use it like this: app.use(cors(corsOptions));
 
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET || 'a-very-long-and-secure-secret-for-dev', { expiresIn: process.env.JWT_EXPIRES_IN || '90d' });
