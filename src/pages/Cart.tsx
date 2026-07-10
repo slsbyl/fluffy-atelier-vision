@@ -99,7 +99,7 @@ const Cart = () => {
           quantity: i.quantity,
           price: i.price,
         })),
-        total: finalTotal,
+        totalAmount: finalTotal,
       };
 
       const res = await axios.post('https://fluffy-atelier-vision-production.up.railway.app/api/v1/orders', orderData);
@@ -129,11 +129,12 @@ const Cart = () => {
           variant: "destructive",
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error placing order:", error);
+      const message = error.response?.data?.message || "حدث خطأ غير متوقع. الرجاء المحاولة لاحقاً.";
       toast({
         title: "خطأ",
-        description: "حدث خطأ غير متوقع. الرجاء المحاولة لاحقاً.",
+        description: message,
         variant: "destructive",
       });
     } finally {

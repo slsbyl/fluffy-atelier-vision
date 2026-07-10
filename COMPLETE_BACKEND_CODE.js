@@ -85,11 +85,16 @@ const orderSchema = new mongoose.Schema({
 });
 
 orderSchema.pre('save', function(next) {
-  const itemsTotal = this.items.reduce((acc, item) => {
-    return acc + ((Number(item.price) || 0) * (Number(item.quantity) || 0));
-  }, 0);
-  this.totalAmount = itemsTotal + (Number(this.shippingFee) || 0);
-  next();
+  try {
+    const itemsTotal = this.items.reduce((acc, item) => {
+      return acc + ((Number(item.price) || 0) * (Number(item.quantity) || 0));
+    }, 0);
+    this.totalAmount = itemsTotal + (Number(this.shippingFee) || 0);
+    next();
+  } catch (error) {
+    // Pass error to the next middleware if calculation fails
+    next(error);
+  }
 });
 
 const Order = mongoose.model('Order', orderSchema);
