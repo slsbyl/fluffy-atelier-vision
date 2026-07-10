@@ -52,20 +52,16 @@ const orderSchema = new mongoose.Schema({
 });
 
 
-orderSchema.pre('save', function(next) {
+orderSchema.pre('save', async function() {
   try {
-    if (this.items && Array.isArray(this.items)) {
-      const subtotal = this.items.reduce((total, item) => {
-        const itemTotal = (item.price || 0) * (item.quantity || 0);
-        return total + itemTotal;
-      }, 0);
-      this.totalAmount = subtotal + (this.shippingFee || 0);
-    } else {
-      this.totalAmount = this.shippingFee || 0;
-    }
-    next();
-  } catch (err) {
-    next(err);
+    // Ensure items is an array before reducing
+    const itemsArray = this.items && Array.isArray(this.items) ? this.items : [];
+    const itemsTotal = itemsArray.reduce((acc, item) => {
+      return acc + ((Number(item.price) || 0) * (Number(item.quantity) || 0));
+    }, 0);
+    this.totalAmount = itemsTotal + (Number(this.shippingFee) || 0);
+  } catch (error) {
+    throw error;
   }
 });
 

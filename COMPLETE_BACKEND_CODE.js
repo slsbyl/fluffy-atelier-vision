@@ -84,17 +84,15 @@ const orderSchema = new mongoose.Schema({
   }
 });
 
-orderSchema.pre('save', function(next) {
-  try {
-    const itemsTotal = this.items.reduce((acc, item) => {
-      return acc + ((Number(item.price) || 0) * (Number(item.quantity) || 0));
-    }, 0);
-    this.totalAmount = itemsTotal + (Number(this.shippingFee) || 0);
-    next();
-  } catch (error) {
-    // Pass error to the next middleware if calculation fails
-    next(error);
-  }
+orderSchema.pre('save', async function() {
+  // Ensure items is an array before reducing
+  const itemsArray = this.items && Array.isArray(this.items) ? this.items : [];
+  const itemsTotal = itemsArray.reduce((acc, item) => {
+    const price = Number(item.price) || 0;
+    const quantity = Number(item.quantity) || 0;
+    return acc + (price * quantity);
+  }, 0);
+  this.totalAmount = itemsTotal + (Number(this.shippingFee) || 0);
 });
 
 const Order = mongoose.model('Order', orderSchema);
@@ -122,9 +120,9 @@ const userSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 userSchema.pre('save', async function() {
-  if (!this.isModified('password')) {
-    return;
-  }
+  // Only run this function if password was actually modified
+  if (!this.isModified('password')) return;
+  // Hash the password with cost of 12
   this.password = await bcrypt.hash(this.password, 12);
 });
 
@@ -455,10 +453,16 @@ router.post('/orders', async (req, res) => {
     const stockValidation = [];
 
     for (const item of items) {
-      if (!item.productId || !item.quantity) {
+      if (!item.quantity) {
         return res.status(400).json({
           status: 'error',
-          message: 'بيانات المنتج غير صحيحة'
+          message: `الكمية غير محددة للمنتج: ${item.productName || 'غير معروف'}`
+        });
+      }
+      if (!item.productId || !mongoose.Types.ObjectId.isValid(item.productId)) {
+        return res.status(400).json({
+          status: 'error',
+          message: `معرف المنتج غير صالح للمنتج: ${item.productName || 'غير معروف'}`
         });
       }
 
@@ -621,15 +625,10 @@ router.post('/orders', async (req, res) => {
           `
         };
 
-        transporter.sendMail(mailOptions, (err, info) => {
-          if (err) {
-            console.error("فشل إرسال الإيميل في الخلفية:", err);
-          } else {
-            console.log("تم إرسال الإيميل في الخلفية بنجاح:", info.response);
-          }
-        });
-        console.log("تم إرسال طلب الإيميل، وجاري إرجاع الاستجابة للعميل...");
-
+        // استخدام await لضمان انتظار اكتمال الإرسال والتقاط الأخطاء بشكل صحيح
+        const info = await transporter.sendMail(mailOptions);
+        console.log("تم إرسال الإيميل بنجاح:", info.response);
+        
       } catch (err) {
         console.error("فشل تجهيز الإيميل:", err);
       }
@@ -670,14 +669,16 @@ router.post('/orders', async (req, res) => {
 
         const fetchMethod = typeof fetch !== 'undefined' ? fetch : null;
         if (fetchMethod) {
-          fetchMethod(n8nWebhookUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        }).then(res => {
-          if (res.ok) console.log("تم إرسال الطلب إلى n8n بنجاح");
-          else console.log("فشل إرسال الطلب إلى n8n، كود الحالة:", res.status);
-        }).catch(err => console.error("خطأ في الاتصال بـ n8n:", err.message));
+          const response = await fetchMethod(n8nWebhookUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (response.ok) {
+            console.log("تم إرسال الطلب إلى n8n بنجاح");
+          } else {
+            console.log("فشل إرسال الطلب إلى n8n، كود الحالة:", response.status);
+          }
         }
       } catch (n8nError) {
         console.error("حدث خطأ غير متوقع أثناء إرسال بيانات n8n:", n8nError);
@@ -856,14 +857,16 @@ router.post('/orders/restore-stock', async (req, res) => {
 
         const fetchMethod = typeof fetch !== 'undefined' ? fetch : null;
         if (fetchMethod) {
-          fetchMethod(n8nWebhookUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        }).then(res => {
-          if (res.ok) console.log("تم إرسال الطلب المرتجع إلى n8n بنجاح");
-          else console.log("فشل إرسال الطلب المرتجع إلى n8n، كود الحالة:", res.status);
-        }).catch(err => console.error("خطأ في الاتصال بـ n8n لإرسال الطلب المرتجع:", err.message));
+          const response = await fetchMethod(n8nWebhookUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (response.ok) {
+            console.log("تم إرسال الطلب المرتجع إلى n8n بنجاح");
+          } else {
+            console.log("فشل إرسال الطلب المرتجع إلى n8n، كود الحالة:", response.status);
+          }
         }
       } catch (n8nError) {
         console.error("حدث خطأ غير متوقع أثناء إرسال بيانات n8n للطلب المرتجع:", n8nError);
@@ -1005,17 +1008,18 @@ router.post('/users/forgot-password', async (req, res) => {
       auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_APP_PASSWORD }
     });
 
-    transporter.sendMail({
-      from: `"Fluffy Store" <${process.env.EMAIL_USER}>`,
-      to: user.email,
-      subject: 'إعادة تعيين كلمة المرور الخاصة بحسابك في Fluffy',
-      html: message
-    }).catch(err => console.error("فشل إرسال إيميل إعادة التعيين:", err));
+    await transporter.sendMail({
+        from: `"Fluffy Store" <${process.env.EMAIL_USER}>`,
+        to: user.email,
+        subject: 'إعادة تعيين كلمة المرور الخاصة بحسابك في Fluffy',
+        html: message
+    });
+    console.log("تم إرسال إيميل إعادة التعيين بنجاح إلى:", user.email);
 
     res.json({ status: 'success', message: 'تم إرسال رابط إعادة التعيين إلى بريدك الإلكتروني.' });
 
   } catch (err) {
-    console.error('FORGOT PASSWORD ERROR:', err);
+    console.error("فشل إرسال إيميل إعادة التعيين:", err);
     res.status(500).json({ status: 'error', message: 'حدث خطأ ما.' });
   }
 });

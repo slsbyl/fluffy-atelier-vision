@@ -463,11 +463,11 @@ const ProductDetail = () => {
                 <h4 className="font-display text-base text-foreground mb-4">اترك تقييمك</h4>
                 <form onSubmit={handleSubmitReview} className="space-y-3">
                   <div>
-                    <Label className="text-xs font-body tracking-wider uppercase text-muted-foreground">اسمك</Label>
-                    <Input value={newReviewName} onChange={(e) => setNewReviewName(e.target.value)} placeholder="اسمك" className="rounded-xl mt-1" required />
+                    <Label htmlFor="reviewName" className="text-xs font-body tracking-wider uppercase text-muted-foreground">اسمك</Label>
+                    <Input id="reviewName" name="reviewName" value={newReviewName} onChange={(e) => setNewReviewName(e.target.value)} placeholder="اسمك" className="rounded-xl mt-1" required />
                   </div>
                   <div>
-                    <Label className="text-xs font-body tracking-wider uppercase text-muted-foreground">التقييم</Label>
+                    <Label id="rating-label" className="text-xs font-body tracking-wider uppercase text-muted-foreground">التقييم</Label>
                     <div className="flex gap-1 mt-1">
                       {[1, 2, 3, 4, 5].map(r => (
                         <button key={r} type="button" onClick={() => setNewReviewRating(r)}>
@@ -477,8 +477,8 @@ const ProductDetail = () => {
                     </div>
                   </div>
                   <div>
-                    <Label className="text-xs font-body tracking-wider uppercase text-muted-foreground">تعليقك</Label>
-                    <textarea value={newReviewText} onChange={(e) => setNewReviewText(e.target.value)} placeholder="شارك رأيك..." rows={3} className="w-full rounded-xl border border-input bg-background px-3 py-2 text-sm font-body mt-1 resize-none focus:outline-none focus:ring-2 focus:ring-ring" required />
+                    <Label htmlFor="reviewText" className="text-xs font-body tracking-wider uppercase text-muted-foreground">تعليقك</Label>
+                    <textarea id="reviewText" name="reviewText" value={newReviewText} onChange={(e) => setNewReviewText(e.target.value)} placeholder="شارك رأيك..." rows={3} className="w-full rounded-xl border border-input bg-background px-3 py-2 text-sm font-body mt-1 resize-none focus:outline-none focus:ring-2 focus:ring-ring" required />
                   </div>
                   <Button type="submit" className="rounded-full font-body text-xs">إرسال التقييم</Button>
                 </form>
@@ -511,7 +511,7 @@ const ProductDetail = () => {
                         <p className="text-sm font-body font-medium">اضغطي لرفع صورتك</p>
                       </div>
                     )}
-                    <input type="file" accept="image/*" onChange={handleFileUpload} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" disabled={vtoLoading} />
+                    <input id="vto-upload" name="vto-upload" type="file" accept="image/*" onChange={handleFileUpload} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" disabled={vtoLoading} />
                   </div>
 
                   <Button onClick={handleVirtualTryOn} disabled={!humanImage || vtoLoading} className="w-full rounded-xl h-14 gap-2">

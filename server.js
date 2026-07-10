@@ -1,13 +1,17 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import { router as apiRouter, Product, Order, User } from './COMPLETE_BACKEND_CODE.js'; // استيراد الراوتر والنماذج من الملف الموحد
+
 dotenv.config();
 
 const app = express();
 
+// Middlewares الأساسية
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
+// إعدادات CORS للسماح بالطلبات من الواجهة الأمامية
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
@@ -15,19 +19,28 @@ app.use((req, res, next) => {
   next();
 });
 
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/fluffy')
-.then(() => console.log('تم الاتصال بقاعدة بيانات MongoDB بنجاح'))
-.catch(err => console.error('خطأ في الاتصال بقاعدة بيانات MongoDB:', err));
-
-import { router } from './COMPLETE_BACKEND_CODE.js';
-app.use('/api/v1', router);
-
-app.use((err, req, res, next) => {
-  console.error('Unhandled error:', err);
-  res.status(500).json({ status: 'error', message: 'حدث خطأ في السيرفر' });
-});
-
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`الخادم يعمل على المنفذ ${PORT}`);
-});
+const DATABASE_URL = process.env.DATABASE_URL || process.env.MONGODB_URI || 'mongodb://localhost:27017/fluffy';
+
+async function startServer() {
+  try {
+    await mongoose.connect(DATABASE_URL);
+    console.log('تم الاتصال بقاعدة بيانات MongoDB بنجاح');
+
+    app.use('/api/v1', apiRouter); // استخدام الراوتر الموحد
+
+    app.use((err, req, res, next) => {
+      console.error('Unhandled error:', err);
+      res.status(500).json({ status: 'error', message: err.message || 'حدث خطأ في السيرفر' });
+    });
+
+    app.listen(PORT, () => {
+      console.log(`الخادم يعمل على المنفذ ${PORT}`);
+    });
+  } catch (err) {
+    console.error('خطأ في الاتصال بقاعدة بيانات MongoDB:', err);
+    process.exit(1);
+  }
+}
+
+startServer();

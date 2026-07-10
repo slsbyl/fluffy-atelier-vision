@@ -191,8 +191,9 @@ const AddProductModal = ({ open, onClose, onSave, editProduct, categories = ["To
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <Label className="text-xs font-body tracking-wider uppercase text-muted-foreground">Product Name *</Label>
+                <Label htmlFor="productName" className="text-xs font-body tracking-wider uppercase text-muted-foreground">Product Name *</Label>
                 <Input
+                  id="productName"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g. Silk Blush Blouse"
@@ -203,8 +204,9 @@ const AddProductModal = ({ open, onClose, onSave, editProduct, categories = ["To
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-xs font-body tracking-wider uppercase text-muted-foreground">Brand</Label>
+                  <Label htmlFor="productBrand" className="text-xs font-body tracking-wider uppercase text-muted-foreground">Brand</Label>
                   <Input
+                    id="productBrand"
                     value={brand}
                     onChange={(e) => setBrand(e.target.value)}
                     placeholder="Fluffy"
@@ -213,8 +215,9 @@ const AddProductModal = ({ open, onClose, onSave, editProduct, categories = ["To
                   />
                 </div>
                 <div>
-                  <Label className="text-xs font-body tracking-wider uppercase text-muted-foreground">Category *</Label>
+                  <Label htmlFor="productCategory" className="text-xs font-body tracking-wider uppercase text-muted-foreground">Category *</Label>
                   <Input
+                    id="productCategory"
                     list="category-options"
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
@@ -232,9 +235,10 @@ const AddProductModal = ({ open, onClose, onSave, editProduct, categories = ["To
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-xs font-body tracking-wider uppercase text-muted-foreground">Price ($) *</Label>
+                  <Label htmlFor="productPrice" className="text-xs font-body tracking-wider uppercase text-muted-foreground">Price ($) *</Label>
                   <Input
                     type="number"
+                    id="productPrice"
                     step="0.01"
                     min="0"
                     value={price}
@@ -245,9 +249,10 @@ const AddProductModal = ({ open, onClose, onSave, editProduct, categories = ["To
                   />
                 </div>
                 <div>
-                  <Label className="text-xs font-body tracking-wider uppercase text-muted-foreground">Stock Qty *</Label>
+                  <Label htmlFor="productStock" className="text-xs font-body tracking-wider uppercase text-muted-foreground">Stock Qty *</Label>
                   <Input
                     type="number"
+                    id="productStock"
                     min="0"
                     value={stock}
                     onChange={(e) => setStock(e.target.value)}
@@ -280,16 +285,18 @@ const AddProductModal = ({ open, onClose, onSave, editProduct, categories = ["To
               </div>
 
           <div>
-            <Label className="text-xs font-body tracking-wider uppercase text-muted-foreground">Colors *</Label>
+            <Label htmlFor="colorPicker" className="text-xs font-body tracking-wider uppercase text-muted-foreground">Colors *</Label>
             <div className="flex gap-2 mt-1">
               <Input
                 type="color"
+                id="colorPicker"
                 value={customColor.startsWith('#') ? customColor : '#000000'}
                 onChange={(e) => setCustomColor(e.target.value)}
                 className="w-14 h-10 p-1 rounded-xl cursor-pointer shadow-soft border-border"
                 title="اختر أي لون من لوحة الألوان"
               />
               <Input
+                name="customColor"
                 value={customColor}
                 onChange={(e) => setCustomColor(e.target.value)}
                 onKeyDown={(e) => {
@@ -332,8 +339,9 @@ const AddProductModal = ({ open, onClose, onSave, editProduct, categories = ["To
           </div>
 
               <div>
-                <Label className="text-xs font-body tracking-wider uppercase text-muted-foreground">Description</Label>
+                <Label htmlFor="productDescription" className="text-xs font-body tracking-wider uppercase text-muted-foreground">Description</Label>
                 <textarea
+                  id="productDescription"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Product description..."
@@ -354,10 +362,10 @@ const AddProductModal = ({ open, onClose, onSave, editProduct, categories = ["To
                       </button>
                     </div>
                   ))}
-                  <label className="flex flex-col items-center justify-center w-24 h-24 rounded-2xl border-2 border-dashed border-border hover:border-primary/50 transition-colors cursor-pointer bg-secondary/30">
+                  <label htmlFor="imageUpload" className="flex flex-col items-center justify-center w-24 h-24 rounded-2xl border-2 border-dashed border-border hover:border-primary/50 transition-colors cursor-pointer bg-secondary/30">
                     <Upload size={20} className="text-muted-foreground mb-1" />
                     <span className="text-[10px] font-body text-muted-foreground">Add Image</span>
-                    <input type="file" accept="image/*" multiple onChange={handleImageChange} className="hidden" disabled={isLoading} />
+                    <input id="imageUpload" type="file" accept="image/*" multiple onChange={handleImageChange} className="hidden" disabled={isLoading} />
                   </label>
                 </div>
               </div>
