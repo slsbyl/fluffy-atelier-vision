@@ -5,7 +5,7 @@ class OrderController {
 
   createOrder = async (req, res) => {
     try {
-      const newOrder = await this.orderService.createOrder(req.query);
+      const newOrder = await this.orderService.createOrder(req.body);
       res.status(201).json({
         status: 'success',
         data: { order: newOrder }
