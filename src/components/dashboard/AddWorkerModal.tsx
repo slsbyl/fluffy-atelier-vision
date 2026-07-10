@@ -17,6 +17,7 @@ const AddWorkerModal = ({ open, onClose, onSave, editWorker }: AddWorkerModalPro
   const [role, setRole] = useState(editWorker?.role || "");
   const [salary, setSalary] = useState(editWorker?.salary?.toString() || "");
   const [startDate, setStartDate] = useState(editWorker?.startDate || "");
+  const [phone, setPhone] = useState(editWorker?.phone || "");
   const [deductions, setDeductions] = useState(editWorker?.deductions?.toString() || "0");
   const [newDeduction, setNewDeduction] = useState("");
   const [notes, setNotes] = useState(editWorker?.notes || "");
@@ -28,6 +29,7 @@ const AddWorkerModal = ({ open, onClose, onSave, editWorker }: AddWorkerModalPro
       setRole(editWorker?.role || "");
       setSalary(editWorker?.salary?.toString() || "");
       setStartDate(editWorker?.startDate || new Date().toISOString().split("T")[0]);
+      setPhone(editWorker?.phone || "");
       setDeductions(editWorker?.deductions?.toString() || "0");
       setNewDeduction("");
       setNotes(editWorker?.notes || "");
@@ -49,6 +51,7 @@ const AddWorkerModal = ({ open, onClose, onSave, editWorker }: AddWorkerModalPro
       role,
       salary: currentSalary,
       startDate,
+      phone,
       deductions: finalDeductions,
       notes
     });
@@ -91,15 +94,19 @@ const AddWorkerModal = ({ open, onClose, onSave, editWorker }: AddWorkerModalPro
                 <Label className="text-xs font-body tracking-wider uppercase text-muted-foreground">Job Role</Label>
                 <Input value={role} onChange={(e) => setRole(e.target.value)} placeholder="الوظيفة (مثال: خياط، مكواة)" className="rounded-xl mt-1" required disabled={isLoading} />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label className="text-xs font-body tracking-wider uppercase text-muted-foreground">Salary ($)</Label>
                   <Input type="number" value={salary} onChange={(e) => setSalary(e.target.value)} placeholder="الراتب الأساسي" className="rounded-xl mt-1" required disabled={isLoading} />
                 </div>
                 <div>
+                  <Label className="text-xs font-body tracking-wider uppercase text-muted-foreground">Phone</Label>
+                  <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="رقم الهاتف (اختياري)" className="rounded-xl mt-1" disabled={isLoading} />
+                </div>
+              </div>
+              <div>
                   <Label className="text-xs font-body tracking-wider uppercase text-muted-foreground">Start Date</Label>
                   <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="rounded-xl mt-1" required disabled={isLoading} />
-                </div>
               </div>
               
               <div className="grid grid-cols-2 gap-4">

@@ -393,11 +393,11 @@ router.get('/workers', async (req, res) => {
 
 router.post('/workers', async (req, res) => {
   try {
-    const { name, role, salary, startDate, deductions, notes } = req.body;
+    const { name, role, salary, startDate, deductions, notes, phone } = req.body;
     const newWorker = new Worker({
-      name, role, salary, startDate, deductions: deductions || 0, notes: notes || ''
+      name, role, salary, startDate, deductions: deductions || 0, notes: notes || '', phone
     });
-    const savedWorker = await newWorker.save();
+    const savedWorker = await newWorker.save(); // The schema has timestamps: true, so createdAt/updatedAt are automatic
     res.status(201).json({ status: 'success', data: { worker: savedWorker } });
   } catch (error) {
     res.status(500).json({ status: 'error', message: 'خطأ في إضافة العامل' });
@@ -1077,7 +1077,11 @@ router.get('/factory-clients', async (req, res) => {
 
 router.post('/factory-clients', async (req, res) => {
   try {
-    const newClient = new FactoryClient(req.body);
+    // Destructure to ensure only expected fields are used from req.body
+    const { companyName, ownerName, phone, username, password } = req.body;
+    const newClient = new FactoryClient({
+      companyName, ownerName, phone, username, password
+    });
     await newClient.save();
     res.status(201).json({ status: 'success', data: { client: newClient } });
   } catch (error) {
