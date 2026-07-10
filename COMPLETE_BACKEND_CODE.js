@@ -12,42 +12,35 @@ const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET || 'a-very-long-and-secure-secret-for-dev', { expiresIn: process.env.JWT_EXPIRES_IN || '90d' });
 };
 
-const productSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true
-  },
-  price: {
-    type: Number,
-    required: true
-  },
-  description: String,
-  image: String,
-  images: [String],
-  category: String,
-  sizes: [String],
-  colors: [String],
-  stock: {
-    type: Number,
-    default: 0,
-    min: 0
-  },
-  isBestSeller: Boolean,
-  isNewArrival: Boolean,
-  rating: Number,
-  reviews: Number,
-  soldCount: {
-    type: Number,
-    default: 0
-  }
-}, { timestamps: true });
-
-console.log('DEBUG: Product Schema defined. Checking for colors field:', productSchema.paths.colors ? 'Exists' : 'Does NOT exist');
-productSchema.methods.hasStock = function(quantity) {
-  return this.stock >= quantity;
-};
-
-const Product = mongoose.model('Product', productSchema);
+const Product = mongoose.model('Product', new mongoose.Schema({
+    name: {
+      type: String,
+      required: true
+    },
+    price: {
+      type: Number,
+      required: true
+    },
+    description: String,
+    image: String,
+    images: [String],
+    category: String,
+    sizes: [String],
+    colors: [String],
+    stock: {
+      type: Number,
+      default: 0,
+      min: 0
+    },
+    isBestSeller: Boolean,
+    isNewArrival: Boolean,
+    rating: Number,
+    reviews: Number,
+    soldCount: {
+      type: Number,
+      default: 0
+    }
+  }, { timestamps: true }));
 
 const orderSchema = new mongoose.Schema({
   customerName: {
@@ -299,16 +292,13 @@ router.post('/products', async (req, res) => {
       images: images || (image ? [image] : []),
       category,
       sizes: sizes || [],
-      colors: colors || [],
+      colors: Array.isArray(colors) ? colors.filter(c => c && c.trim() !== '') : [],
       stock: stock || 0,
       isBestSeller: false,
       isNewArrival: true
     });
 
     const savedProduct = await newProduct.save();
-    console.log("DEBUG: Product instance BEFORE save (newProduct):", newProduct);
-    console.log("DEBUG: Product Schema paths at time of save:", Product.schema.paths.colors ? 'Exists' : 'Does NOT exist');
-    console.log("المنتج المحفوظ في قاعدة البيانات (savedProduct):", savedProduct);
 
     res.status(201).json({
       status: 'success',
@@ -338,7 +328,7 @@ router.put('/products/:id', async (req, res) => {
         images: images || (image ? [image] : []),
         category,
         sizes: sizes || [],
-        colors: colors || [],
+        colors: Array.isArray(colors) ? colors.filter(c => c && c.trim() !== '') : [],
         stock: stock || 0,
         brand
       },

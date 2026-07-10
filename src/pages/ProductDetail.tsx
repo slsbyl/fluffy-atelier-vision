@@ -16,18 +16,6 @@ interface Review {
   text: string;
 }
 
-const getColorCode = (colorName: string) => {
-  const colorsMap: Record<string, string> = {
-    "أحمر": "red", "احمر": "red", "أزرق": "blue", "ازرق": "blue",
-    "أخضر": "green", "اخضر": "green", "أسود": "black", "اسود": "black",
-    "أبيض": "white", "ابيض": "white", "أصفر": "yellow", "اصفر": "yellow",
-    "برتقالي": "orange", "وردي": "pink", "بمبي": "pink", "بنفسجي": "purple",
-    "رمادي": "gray", "رصاصي": "gray", "بني": "brown", "كحلي": "navy",
-    "بيج": "beige", "ذهبي": "gold", "فضي": "silver"
-  };
-  return colorsMap[colorName.trim().toLowerCase()] || colorName;
-};
-
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -389,26 +377,23 @@ const ProductDetail = () => {
                       </div>
                     )}
 
-                    {product.colors && product.colors.length > 0 && (
+                    {Array.isArray(product.colors) && product.colors.length > 0 && (
                       <div>
                         <p className="text-[11px] font-body text-muted-foreground mb-2">اللون:</p>
                         <div className="flex flex-wrap gap-2">
-                          {product.colors.map((color: string) => {
-                            const colorCode = getColorCode(color);
-                            return (
-                              <button
-                                key={color}
-                                onClick={() => updateSelection(idx, 'color', color)}
-                                className={`relative w-9 h-9 rounded-full border transition-all duration-200 flex items-center justify-center shadow-soft hover:scale-110 ${sel.color === color ? "border-primary ring-2 ring-primary/20 scale-110" : "border-border/50"}`}
-                                style={{ backgroundColor: colorCode }}
-                                title={color}
-                              >
-                                {sel.color === color && (
-                                  <span className={`w-3 h-3 rounded-full ${['white', 'ابيض', 'أبيض', '#ffffff', '#fff'].includes(color.trim().toLowerCase()) ? 'bg-black' : 'bg-white'}`}></span>
-                                )}
-                              </button>
-                            );
-                          })}
+                          {product.colors.filter((c: string) => c).map((color: string) => (
+                            <button
+                              key={color}
+                              onClick={() => updateSelection(idx, 'color', color)}
+                              className={`relative w-9 h-9 rounded-full border transition-all duration-200 flex items-center justify-center shadow-soft hover:scale-110 ${sel.color === color ? "border-primary ring-2 ring-primary/20 scale-110" : "border-border/50"}`}
+                              style={{ backgroundColor: color }}
+                              title={color}
+                            >
+                              {sel.color === color && (
+                                <span className={`w-3 h-3 rounded-full ${['white', 'ابيض', 'أبيض', '#ffffff', '#fff'].includes(color.trim().toLowerCase()) ? 'bg-black' : 'bg-white'}`}></span>
+                              )}
+                            </button>
+                          ))}
                         </div>
                       </div>
                     )}

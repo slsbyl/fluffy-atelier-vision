@@ -23,6 +23,8 @@ const productSchema = new mongoose.Schema({
     default: 0
   },
   sizes: [String],
+  colors: [String],
+  images: [String],
   image: {
     type: String,
     default: 'https://via.placeholder.com/150'

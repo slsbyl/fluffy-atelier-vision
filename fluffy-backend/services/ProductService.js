@@ -4,7 +4,21 @@ class ProductService {
   }
 
   async createProduct(data) {
-    return await this.productModel.create(data);
+    console.log('Data received in createProduct:', JSON.stringify(data, null, 2));
+    const productData = {
+      name: data.name,
+      price: data.price,
+      description: data.description,
+      category: data.category,
+      brand: data.brand,
+      stock: data.stock,
+      sizes: data.sizes,
+      colors: data.colors,
+      images: data.images,
+      image: data.image,
+      inStock: data.inStock
+    };
+    return await this.productModel.create(productData);
   }
 
   async getAllProducts() {
@@ -29,7 +43,21 @@ class ProductService {
   }
 
   async updateProduct(id, data) {
-    const product = await this.productModel.findByIdAndUpdate(id, data, {
+    console.log(`Data received in updateProduct for id ${id}:`, JSON.stringify(data, null, 2));
+    const productData = {
+      name: data.name,
+      price: data.price,
+      description: data.description,
+      category: data.category,
+      brand: data.brand,
+      stock: data.stock,
+      sizes: data.sizes,
+      colors: data.colors,
+      images: data.images,
+      image: data.image,
+      inStock: data.inStock
+    };
+    const product = await this.productModel.findByIdAndUpdate(id, productData, {
       new: true,
       runValidators: true
     });

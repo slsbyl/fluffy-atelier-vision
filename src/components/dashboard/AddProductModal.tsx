@@ -15,18 +15,6 @@ interface AddProductModalProps {
 
 const sizeOptions = ["XS", "S", "M", "L", "XL", "XXL"];
 
-const getColorCode = (colorName: string) => {
-  const colorsMap: Record<string, string> = {
-    "أحمر": "red", "احمر": "red", "أزرق": "blue", "ازرق": "blue",
-    "أخضر": "green", "اخضر": "green", "أسود": "black", "اسود": "black",
-    "أبيض": "white", "ابيض": "white", "أصفر": "yellow", "اصفر": "yellow",
-    "برتقالي": "orange", "وردي": "pink", "بمبي": "pink", "بنفسجي": "purple",
-    "رمادي": "gray", "رصاصي": "gray", "بني": "brown", "كحلي": "navy",
-    "بيج": "beige", "ذهبي": "gold", "فضي": "silver"
-  };
-  return colorsMap[colorName.trim().toLowerCase()] || colorName;
-};
-
 const AddProductModal = ({ open, onClose, onSave, editProduct, categories = ["Tops", "Dresses", "Outerwear", "Bottoms", "Knitwear"] }: AddProductModalProps) => {
   const [name, setName] = useState("");
   const [brand, setBrand] = useState("Fluffy");
@@ -78,9 +66,9 @@ const AddProductModal = ({ open, onClose, onSave, editProduct, categories = ["To
     if (e) e.preventDefault();
     const trimmed = customColor.trim();
     if (trimmed && !selectedColors.includes(trimmed)) {
-      setSelectedColors([...selectedColors, trimmed]);
+      setSelectedColors(prev => [...prev, trimmed]);
+      setCustomColor("");
     }
-    setCustomColor("");
   };
 
   const removeColor = (colorToRemove: string) => {
@@ -329,7 +317,7 @@ const AddProductModal = ({ open, onClose, onSave, editProduct, categories = ["To
                   key={color}
                   className="px-3 py-1.5 rounded-full text-xs font-body bg-primary text-primary-foreground flex items-center gap-2 shadow-soft"
                 >
-                  <span className="w-3 h-3 rounded-full border border-border/50 bg-white" style={{ backgroundColor: getColorCode(color) }}></span>
+                  <span className="w-3 h-3 rounded-full border border-border/50 bg-white" style={{ backgroundColor: color }}></span>
                   {color}
                   <button
                     type="button"

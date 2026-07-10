@@ -8,18 +8,6 @@ interface ProductCardProps {
   index?: number;
 }
 
-const getColorCode = (colorName: string) => {
-  const colorsMap: Record<string, string> = {
-    "أحمر": "red", "احمر": "red", "أزرق": "blue", "ازرق": "blue",
-    "أخضر": "green", "اخضر": "green", "أسود": "black", "اسود": "black",
-    "أبيض": "white", "ابيض": "white", "أصفر": "yellow", "اصفر": "yellow",
-    "برتقالي": "orange", "وردي": "pink", "بمبي": "pink", "بنفسجي": "purple",
-    "رمادي": "gray", "رصاصي": "gray", "بني": "brown", "كحلي": "navy",
-    "بيج": "beige", "ذهبي": "gold", "فضي": "silver"
-  };
-  return colorsMap[colorName.trim().toLowerCase()] || colorName;
-};
-
 const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
   const navigate = useNavigate();
   const hasMultipleImages = (product as any).images && (product as any).images.length > 1;
@@ -124,7 +112,7 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
               {(product as any).colors && (product as any).colors.length > 0 && (
                 <div className="flex items-center gap-1">
                   {(product as any).colors.slice(0, 4).map((color: string, i: number) => (
-                    <span key={i} className="w-2.5 h-2.5 rounded-full border border-border/50 shadow-soft" style={{ backgroundColor: getColorCode(color) }} title={color}></span>
+                    <span key={i} className="w-2.5 h-2.5 rounded-full border border-border/50 shadow-soft" style={{ backgroundColor: color }} title={color}></span>
                   ))}
                   {(product as any).colors.length > 4 && (
                     <span className="text-[10px] text-muted-foreground">+{(product as any).colors.length - 4}</span>
