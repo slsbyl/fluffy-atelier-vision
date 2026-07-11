@@ -1,18 +1,12 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import { router as apiRouter } from './COMPLETE_BACKEND_CODE.js'; // Re-enabling the main router
+import { router as apiRouter } from './COMPLETE_BACKEND_CODE.js';
 import cors from 'cors';
 
 dotenv.config();
 
 const app = express();
-
-// Logging middleware to see all incoming requests
-app.use((req, res, next) => {
-  console.log(`[${new Date().toISOString()}] INCOMING: ${req.method} ${req.originalUrl}`);
-  next();
-});
 
 // Middlewares الأساسية
 app.use(express.json({ limit: '50mb' }));
@@ -47,17 +41,11 @@ app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 
 
-// Root endpoint to confirm server is running and deployments are working
-app.get('/', (req, res) => {
-  res.status(200).send('<h1>Fluffy API is Running! (Logger-Enabled Version)</h1><p>This version logs all incoming requests.</p>');
-});
-
 // API routes should be before the frontend serving
 app.use('/api/v1', apiRouter);
 
 // Add a custom 404 handler for any other route that is not found
 app.use((req, res, next) => {
-  console.error(`[404] Route not found: ${req.method} ${req.originalUrl}`);
   res.status(404).json({ status: 'error', message: `API route not found on the server: ${req.originalUrl}` });
 });
 
