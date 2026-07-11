@@ -1,7 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import { router as apiRouter, Product, Order, User, Worker, FactoryClient, WholesaleOrder } from './COMPLETE_BACKEND_CODE.js'; // استيراد الراوتر والنماذج من الملف الموحد
+// import { router as apiRouter, Product, Order, User, Worker, FactoryClient, WholesaleOrder } from './COMPLETE_BACKEND_CODE.js'; // TEMPORARILY DISABLED FOR TESTING
 import cors from 'cors';
 
 dotenv.config();
@@ -51,8 +51,13 @@ app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok', message: 'Server is healthy and running correctly.' });
 });
 
+// Simple API test route to diagnose routing issues
+app.get('/api/v1/test', (req, res) => {
+  res.status(200).json({ status: 'ok', message: 'API test route is working!' });
+});
+
 // API routes should be before the frontend serving
-app.use('/api/v1', apiRouter);
+// app.use('/api/v1', apiRouter); // TEMPORARILY DISABLED FOR TESTING
 
 // Add a custom 404 handler for any other route that is not found
 app.use((req, res, next) => {
