@@ -41,6 +41,11 @@ app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 
 
+// Simple health check endpoint for debugging
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok', message: 'Server is healthy and running correctly.' });
+});
+
 // API routes should be before the frontend serving
 app.use('/api/v1', apiRouter);
 
