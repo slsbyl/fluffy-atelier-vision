@@ -46,9 +46,6 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-// Handle preflight requests for all routes
-app.options('*', cors(corsOptions));
-
 
 // API routes should be before the frontend serving
 app.use('/api/v1/products', productRouter);
