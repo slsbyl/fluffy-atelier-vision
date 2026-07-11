@@ -39,6 +39,9 @@ app.use(cors(corsOptions));
 // Handle preflight requests for all routes
 app.options('*', cors(corsOptions));
 
+// استخدام الراوتر الموحد لجميع مسارات API
+app.use('/api/v1', apiRouter);
+
 const PORT = process.env.PORT || 3000;
 const DATABASE_URL = process.env.DATABASE_URL || process.env.MONGODB_URI || 'mongodb://localhost:27017/fluffy';
 
@@ -46,8 +49,6 @@ async function startServer() {
   try {
     await mongoose.connect(DATABASE_URL);
     console.log('تم الاتصال بقاعدة بيانات MongoDB بنجاح');
-
-    app.use('/api/v1', apiRouter); // استخدام الراوتر الموحد
 
     app.use((err, req, res, next) => {
       console.error('Unhandled error:', err);
