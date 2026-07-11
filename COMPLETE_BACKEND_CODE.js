@@ -8,6 +8,7 @@ import { Client } from '@gradio/client';
 import nodemailer from 'nodemailer';
 import jwt from 'jsonwebtoken';
 const router = express.Router();
+console.log('[BACKEND_CODE] Router initialized.');
 
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET || 'a-very-long-and-secure-secret-for-dev', { expiresIn: process.env.JWT_EXPIRES_IN || '90d' });
@@ -180,6 +181,7 @@ const settingsSchema = new mongoose.Schema({
   type: { type: String, required: true, unique: true },
   rates: { type: Object, default: {} }
 });
+console.log('[BACKEND_CODE] All Mongoose models defined.');
 const Settings = mongoose.model('Settings', settingsSchema);
 
 router.get('/products', async (req, res) => {
@@ -383,6 +385,7 @@ router.delete('/products/:id', async (req, res) => {
     });
   }
 });
+console.log('[BACKEND_CODE] Product routes registered.');
 
 router.get('/workers', async (req, res) => {
   try {
@@ -435,6 +438,7 @@ router.delete('/workers/:id', async (req, res) => {
     res.status(500).json({ status: 'error', message: 'خطأ في حذف العامل' });
   }
 });
+console.log('[BACKEND_CODE] Worker routes registered.');
 
 router.post('/orders', async (req, res) => {
   try {
@@ -717,6 +721,7 @@ router.post('/orders', async (req, res) => {
     });
   }
 });
+console.log('[BACKEND_CODE] Order routes registered.');
 
 router.patch('/products/:productId/stock', async (req, res) => {
   try {
@@ -896,6 +901,7 @@ router.post('/orders/restore-stock', async (req, res) => {
     });
   }
 });
+console.log('[BACKEND_CODE] Stock management routes registered.');
 
 router.get('/orders', async (req, res) => {
   try {
@@ -915,6 +921,7 @@ router.get('/orders', async (req, res) => {
     });
   }
 });
+console.log('[BACKEND_CODE] Final order routes registered.');
 
 router.post('/users/signup', async (req, res) => {
   try {
@@ -1050,7 +1057,7 @@ router.patch('/users/reset-password/:token', async (req, res) => {
     res.status(500).json({ status: 'error', message: 'حدث خطأ ما.' });
   }
 });
-
+console.log('[BACKEND_CODE] User auth routes registered.');
 
 router.post('/factory-clients/login', async (req, res) => {
   try {
@@ -1115,6 +1122,7 @@ router.post('/factory-clients/:id/payment', async (req, res) => {
     res.status(500).json({ status: 'error', message: 'خطأ في تسجيل الدفعة' });
   }
 });
+console.log('[BACKEND_CODE] Factory client routes registered.');
 
 router.post('/wholesale-orders', async (req, res) => {
   try {
@@ -1141,6 +1149,7 @@ router.get('/wholesale-orders', async (req, res) => {
     res.status(500).json({ status: 'error', message: 'خطأ في جلب الطلبات' });
   }
 });
+console.log('[BACKEND_CODE] Wholesale order GET route registered.');
 
 router.put('/wholesale-orders/:id', async (req, res) => {
   try {
@@ -1193,6 +1202,7 @@ router.put('/wholesale-orders/:id', async (req, res) => {
     res.status(500).json({ status: 'error', message: 'خطأ في تحديث الحالة' });
   }
 });
+console.log('[BACKEND_CODE] Wholesale order PUT route registered.');
 
 router.get('/shipping-rates', async (req, res) => {
   try {
@@ -1218,6 +1228,7 @@ router.put('/shipping-rates', async (req, res) => {
     res.status(500).json({ status: 'error', message: 'خطأ في تحديث أسعار التوصيل' });
   }
 });
+console.log('[BACKEND_CODE] Shipping rates routes registered.');
 
 router.post('/vto', async (req, res) => {
   try {
@@ -1283,5 +1294,6 @@ router.post('/vto', async (req, res) => {
     res.status(500).json({ status: 'error', message: error.message || 'حدث خطأ أثناء معالجة الصورة عبر Hugging Face' });
   }
 });
+console.log('[BACKEND_CODE] VTO route registered. All routes loaded.');
 
 export { router, Product, Order, Worker, User, FactoryClient, WholesaleOrder };
