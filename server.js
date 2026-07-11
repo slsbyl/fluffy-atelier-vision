@@ -39,7 +39,7 @@ app.use(cors(corsOptions));
 // Handle preflight requests for all routes
 app.options('*', cors(corsOptions));
 
-// استخدام الراوتر الموحد لجميع مسارات API
+
 app.use('/api/v1', apiRouter);
 
 const PORT = process.env.PORT || 3000;

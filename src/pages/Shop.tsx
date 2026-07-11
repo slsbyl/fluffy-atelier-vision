@@ -5,6 +5,8 @@ import ProductCard from "@/components/ProductCard";
 import type { Product } from "@/data/products";
 import { Loader } from "lucide-react";
 
+const API_BASE_URL = 'https://fluffy-atelier-vision-production.up.railway.app/api/v1';
+
 const Shop = () => {
   const [activeCategory, setActiveCategory] = useState("All");
   const [products, setProducts] = useState<Product[]>([]);
@@ -19,7 +21,7 @@ const Shop = () => {
         setLoading(true);
         setError(null);
 
-        const response = await axios.get('https://fluffy-atelier-vision-production.up.railway.app/api/v1/products');
+        const response = await axios.get(`${API_BASE_URL}/products`);
 
         if (response.data.status === 'success') {
           const transformedProducts: Product[] = response.data.data.products.map((item: any) => ({

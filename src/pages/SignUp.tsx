@@ -5,6 +5,8 @@ import { Mail, Lock, User, Phone, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 
+const API_BASE_URL = 'https://fluffy-atelier-vision-production.up.railway.app/api/v1';
+
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [name, setName] = useState("");
@@ -18,7 +20,7 @@ const SignUp = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const response = await axios.post('https://fluffy-atelier-vision-production.up.railway.app/api/v1/users/signup', {
+      const response = await axios.post(`${API_BASE_URL}/users/signup`, {
         name,
         email: email.trim().toLowerCase(),
         phone,

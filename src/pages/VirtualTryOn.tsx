@@ -6,6 +6,8 @@ import { products } from "@/data/products";
 import axios from "axios";
 import { useToast } from "@/hooks/use-toast";
 
+const API_BASE_URL = 'https://fluffy-atelier-vision-production.up.railway.app/api/v1';
+
 const VirtualTryOn = () => {
   const [uploadedPhoto, setUploadedPhoto] = useState<string | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<typeof products[0] | null>(null);
@@ -45,7 +47,7 @@ const VirtualTryOn = () => {
         console.error("Failed to convert product image", err);
       }
 
-      const response = await axios.post("https://fluffy-atelier-vision-production.up.railway.app/api/v1/vto", {
+      const response = await axios.post(`${API_BASE_URL}/vto`, {
         humanImage: uploadedPhoto,
         productImage: finalProductImage,
         category: selectedProduct.category

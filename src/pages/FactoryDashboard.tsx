@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import axios from "axios";
 
+const API_BASE_URL = 'https://fluffy-atelier-vision-production.up.railway.app/api/v1';
+
 const FactoryDashboard = () => {
   const [client, setClient] = useState<any>(null);
   const [username, setUsername] = useState("");
@@ -30,13 +32,13 @@ const FactoryDashboard = () => {
 
   const fetchInitialData = async (clientId: string) => {
     try {
-      const clientRes = await axios.get(`https://fluffy-atelier-vision-production.up.railway.app/api/v1/factory-clients/${clientId}`);
+      const clientRes = await axios.get(`${API_BASE_URL}/factory-clients/${clientId}`);
       if (clientRes.data.status === 'success') {
         setClient(clientRes.data.data.client);
         localStorage.setItem("factory_client", JSON.stringify(clientRes.data.data.client));
       }
 
-      const ordersRes = await axios.get(`https://fluffy-atelier-vision-production.up.railway.app/api/v1/wholesale-orders?clientId=${clientId}`);
+      const ordersRes = await axios.get(`${API_BASE_URL}/wholesale-orders?clientId=${clientId}`);
       setOrders(ordersRes.data.data.orders);
     } catch (err) {}
   };
@@ -44,7 +46,7 @@ const FactoryDashboard = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await axios.post('https://fluffy-atelier-vision-production.up.railway.app/api/v1/factory-clients/login', { username, password });
+      const res = await axios.post(`${API_BASE_URL}/factory-clients/login`, { username, password });
       setClient(res.data.data.client);
       localStorage.setItem("factory_client", JSON.stringify(res.data.data.client));
       fetchInitialData(res.data.data.client._id);
@@ -105,10 +107,10 @@ const FactoryDashboard = () => {
       };
 
       if (editingOrderId) {
-        await axios.put(`https://fluffy-atelier-vision-production.up.railway.app/api/v1/wholesale-orders/${editingOrderId}`, payload);
+        await axios.put(`${API_BASE_URL}/wholesale-orders/${editingOrderId}`, payload);
         alert("تم تعديل الطلب بنجاح");
       } else {
-        await axios.post('https://fluffy-atelier-vision-production.up.railway.app/api/v1/wholesale-orders', payload);
+        await axios.post(`${API_BASE_URL}/wholesale-orders`, payload);
         alert("تم إرسال الطلب للمصنع بنجاح، في انتظار تسعير الأونر");
       }
       

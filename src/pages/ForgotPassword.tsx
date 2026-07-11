@@ -5,6 +5,8 @@ import { Mail, ArrowLeft, Loader, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 
+const API_BASE_URL = 'https://fluffy-atelier-vision-production.up.railway.app/api/v1';
+
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -17,7 +19,7 @@ const ForgotPassword = () => {
     setIsLoading(true);
     setMessage("");
     try {
-      const response = await axios.post('https://fluffy-atelier-vision-production.up.railway.app/api/v1/users/forgot-password', { email: email.trim().toLowerCase() });
+      const response = await axios.post(`${API_BASE_URL}/users/forgot-password`, { email: email.trim().toLowerCase() });
       setMessage(response.data.message || "تم إرسال رابط إعادة التعيين بنجاح.");
     } catch (error: any) {
       if (error.message === "Network Error") {

@@ -30,6 +30,8 @@ const EGYPT_GOVERNORATES = [
   "جنوب سيناء", "شمال سيناء", "سوهاج", "قنا", "كفر الشيخ", "مطروح", "الأقصر"
 ];
 
+const API_BASE_URL = 'https://fluffy-atelier-vision-production.up.railway.app/api/v1';
+
 const Cart = () => {
   const { items, removeItem, updateQuantity, getTotal, clearCart } = useCart();
   const [showCheckout, setShowCheckout] = useState(false);
@@ -51,7 +53,7 @@ const Cart = () => {
   const finalTotal = total + shippingFee;
 
   useEffect(() => {
-    axios.get('https://fluffy-atelier-vision-production.up.railway.app/api/v1/shipping-rates')
+    axios.get(`${API_BASE_URL}/shipping-rates`)
       .then(res => {
         if (res.data.status === 'success') {
           setShippingRates(res.data.data.rates);
@@ -102,7 +104,7 @@ const Cart = () => {
         totalAmount: finalTotal,
       };
 
-      const res = await axios.post('https://fluffy-atelier-vision-production.up.railway.app/api/v1/orders', orderData);
+      const res = await axios.post(`${API_BASE_URL}/orders`, orderData);
 
       if (res.data.status === 'success') {
         setLastPlacedOrder({

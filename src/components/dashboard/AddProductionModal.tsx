@@ -15,6 +15,8 @@ interface AddProductionModalProps {
 
 const statusOptions = ["Pending", "Cutting", "Sewing", "Finished"];
 
+const API_BASE_URL = 'https://fluffy-atelier-vision-production.up.railway.app/api/v1';
+
 const AddProductionModal = ({ open, onClose, onSave, editRecord }: AddProductionModalProps) => {
   const [products, setProducts] = useState<any[]>([]);
   const [selectedProduct, setSelectedProduct] = useState("");
@@ -36,7 +38,7 @@ const AddProductionModal = ({ open, onClose, onSave, editRecord }: AddProduction
   const fetchProducts = async () => {
     try {
       setFetchingProducts(true);
-      const response = await axios.get('https://fluffy-atelier-vision-production.up.railway.app/api/v1/products');
+      const response = await axios.get(`${API_BASE_URL}/products`);
       if (response.data.status === 'success') {
         setProducts(response.data.data.products);
       }

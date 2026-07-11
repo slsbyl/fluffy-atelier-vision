@@ -5,6 +5,8 @@ import { Lock, Eye, EyeOff, Loader, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 
+const API_BASE_URL = 'https://fluffy-atelier-vision-production.up.railway.app/api/v1';
+
 const ResetPassword = () => {
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
@@ -31,7 +33,7 @@ const ResetPassword = () => {
     setMessage("");
 
     try {
-      const response = await axios.patch(`https://fluffy-atelier-vision-production.up.railway.app/api/v1/users/reset-password/${token}`, {
+      const response = await axios.patch(`${API_BASE_URL}/users/reset-password/${token}`, {
         password,
         passwordConfirm,
       });

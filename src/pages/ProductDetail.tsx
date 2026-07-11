@@ -16,6 +16,8 @@ interface Review {
   text: string;
 }
 
+const API_BASE_URL = 'https://fluffy-atelier-vision-production.up.railway.app/api/v1';
+
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -54,7 +56,7 @@ const ProductDetail = () => {
         setError(null);
 
         try {
-          const response = await axios.get(`https://fluffy-atelier-vision-production.up.railway.app/api/v1/products/${id}`);
+          const response = await axios.get(`${API_BASE_URL}/products/${id}`);
           if (response.data?.status === 'success' || response.status === 200) {
             const fetchedProduct = response.data.data?.product || response.data.data || response.data;
             if (fetchedProduct) {
@@ -68,7 +70,7 @@ const ProductDetail = () => {
         }
 
         try {
-          const allResponse = await axios.get(`https://fluffy-atelier-vision-production.up.railway.app/api/v1/products`);
+          const allResponse = await axios.get(`${API_BASE_URL}/products`);
           if (allResponse.data?.status === 'success' || allResponse.status === 200) {
             const allProducts = allResponse.data.data?.products || allResponse.data;
             const foundProduct = allProducts.find((p: any) => String(p._id) === id || String(p.id) === id);
@@ -225,7 +227,7 @@ const ProductDetail = () => {
         console.error("Failed to convert product image", err);
       }
 
-      const response = await axios.post("https://fluffy-atelier-vision-production.up.railway.app/api/v1/vto", {
+      const response = await axios.post(`${API_BASE_URL}/vto`, {
         humanImage, productImage: finalProductImage, category: product.category
       });
       

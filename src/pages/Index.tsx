@@ -8,6 +8,8 @@ import heroImage from "@/assets/hero-1.jpg";
 import collectionImage from "@/assets/collection-1.jpg";
 import axios from "axios";
 
+const API_BASE_URL = 'https://fluffy-atelier-vision-production.up.railway.app/api/v1';
+
 const Index = () => {
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -23,7 +25,7 @@ const Index = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('https://fluffy-atelier-vision-production.up.railway.app/api/v1/products');
+        const response = await axios.get(`${API_BASE_URL}/products`);
         if (response.data.status === 'success') {
           const transformed = response.data.data.products.map((item: any) => ({
             id: item._id || item.id,
