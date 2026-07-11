@@ -41,6 +41,11 @@ app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 
 
+// Root endpoint to confirm server is running and deployments are working
+app.get('/', (req, res) => {
+  res.status(200).send('<h1>Fluffy API is Running!</h1><p>If you see this message, it means the latest code has been deployed successfully.</p><p>Now you can test the <a href="/health">/health</a> endpoint.</p>');
+});
+
 // Simple health check endpoint for debugging
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok', message: 'Server is healthy and running correctly.' });
