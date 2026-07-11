@@ -184,6 +184,57 @@ const settingsSchema = new mongoose.Schema({
 console.log('[BACKEND_CODE] All Mongoose models defined.');
 const Settings = mongoose.model('Settings', settingsSchema);
 
+console.log('[BACKEND_CODE] DIAGNOSTIC: Registering Worker routes FIRST.');
+router.get('/workers', async (req, res) => {
+  try {
+    const workers = await Worker.find().sort({ createdAt: -1 });
+    res.json({ status: 'success', data: { workers } });
+  } catch (error) {
+    res.status(500).json({ status: 'error', message: 'خطأ في جلب العمال' });
+  }
+});
+
+router.post('/workers', async (req, res) => {
+  try {
+    const { name, role, salary, startDate, deductions, notes, phone } = req.body;
+    const newWorker = new Worker({
+      name, role, salary, startDate, deductions: deductions || 0, notes: notes || '', phone
+    });
+    const savedWorker = await newWorker.save();
+    res.status(201).json({ status: 'success', data: { worker: savedWorker } });
+  } catch (error) {
+    if (error.name === 'ValidationError') {
+      const messages = Object.values(error.errors).map(val => val.message).join(', ');
+      return res.status(400).json({ status: 'fail', message: `فشل التحقق: ${messages}` });
+    }
+    console.error("Error adding worker:", error);
+    res.status(500).json({ status: 'error', message: 'خطأ في إضافة العامل' });
+  }
+});
+
+router.put('/workers/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedWorker = await Worker.findByIdAndUpdate(id, req.body, { new: true });
+    if (!updatedWorker) return res.status(404).json({ status: 'error', message: 'العامل غير موجود' });
+    res.json({ status: 'success', data: { worker: updatedWorker } });
+  } catch (error) {
+    res.status(500).json({ status: 'error', message: 'خطأ في تحديث بيانات العامل' });
+  }
+});
+
+router.delete('/workers/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedWorker = await Worker.findByIdAndDelete(id);
+    if (!deletedWorker) return res.status(404).json({ status: 'error', message: 'العامل غير موجود' });
+    res.json({ status: 'success', message: 'تم حذف العامل' });
+  } catch (error) {
+    res.status(500).json({ status: 'error', message: 'خطأ في حذف العامل' });
+  }
+});
+console.log('[BACKEND_CODE] Worker routes registered.');
+
 router.get('/products', async (req, res) => {
   try {
     const { category } = req.query;
@@ -386,59 +437,6 @@ router.delete('/products/:id', async (req, res) => {
   }
 });
 console.log('[BACKEND_CODE] Product routes registered.');
-
-router.get('/workers', async (req, res) => {
-  try {
-    const workers = await Worker.find().sort({ createdAt: -1 });
-    res.json({ status: 'success', data: { workers } });
-  } catch (error) {
-    res.status(500).json({ status: 'error', message: 'خطأ في جلب العمال' });
-  }
-});
-
-router.post('/workers', async (req, res) => {
-  try {
-    const { name, role, salary, startDate, deductions, notes, phone } = req.body;
-    const newWorker = new Worker({
-      name, role, salary, startDate, deductions: deductions || 0, notes: notes || '', phone
-    });
-    const savedWorker = await newWorker.save(); // The schema has timestamps: true, so createdAt/updatedAt are automatic
-    res.status(201).json({ status: 'success', data: { worker: savedWorker } });
-  } catch (error) {
-    if (error.name === 'ValidationError') {
-      const messages = Object.values(error.errors).map(val => val.message).join(', ');
-      return res.status(400).json({ status: 'fail', message: `فشل التحقق: ${messages}` });
-    }
-    console.error("Error adding worker:", error);
-    res.status(500).json({ status: 'error', message: 'خطأ في إضافة العامل' });
-  }
-});
-
-router.put('/workers/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const updateData = req.body;
-    
-    const updatedWorker = await Worker.findByIdAndUpdate(id, updateData, { new: true });
-    if (!updatedWorker) return res.status(404).json({ status: 'error', message: 'العامل غير موجود' });
-    
-    res.json({ status: 'success', data: { worker: updatedWorker } });
-  } catch (error) {
-    res.status(500).json({ status: 'error', message: 'خطأ في تحديث بيانات العامل' });
-  }
-});
-
-router.delete('/workers/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const deletedWorker = await Worker.findByIdAndDelete(id);
-    if (!deletedWorker) return res.status(404).json({ status: 'error', message: 'العامل غير موجود' });
-    res.json({ status: 'success', message: 'تم حذف العامل' });
-  } catch (error) {
-    res.status(500).json({ status: 'error', message: 'خطأ في حذف العامل' });
-  }
-});
-console.log('[BACKEND_CODE] Worker routes registered.');
 
 router.post('/orders', async (req, res) => {
   try {
