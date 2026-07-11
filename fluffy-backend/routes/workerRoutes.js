@@ -1,16 +1,14 @@
-const express = require('express');
-const container = require('../container');
+import express from 'express';
+import { getAllWorkers, createWorker, updateWorker, deleteWorker } from '../controllers/workerController.js';
 
-const workerController = container.resolve('WorkerController');
 const router = express.Router();
 
 router.route('/')
-  .get(workerController.getAllWorkers)
-  .post(workerController.createWorker);
+  .get(getAllWorkers)
+  .post(createWorker);
 
 router.route('/:id')
-  .get(workerController.getWorker)
-  .patch(workerController.updateWorker)
-  .delete(workerController.deleteWorker);
+  .put(updateWorker)
+  .delete(deleteWorker);
 
-module.exports = router;
+export default router;

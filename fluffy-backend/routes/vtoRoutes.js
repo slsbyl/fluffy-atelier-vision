@@ -1,9 +1,8 @@
-const express = require('express');
-const container = require('../container');
+import express from 'express';
+import { tryOn } from '../controllers/vtoController.js';
 
-const vtoController = container.resolve('VTOController');
 const router = express.Router();
 
-router.post('/', vtoController.tryOn);
+router.post('/', tryOn);
 
-module.exports = router;
+export default router;

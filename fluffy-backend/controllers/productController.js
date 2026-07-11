@@ -1,68 +1,71 @@
-class ProductController {
-  constructor(productService) {
-    this.productService = productService;
+import Product from '../models/productModel.js';
+import mongoose from 'mongoose';
+
+export const getAllProducts = async (req, res) => {
+  try {
+    const { category } = req.query;
+    let filter = {};
+    if (category && category !== 'All') {
+      filter.category = category;
+    }
+    const products = await Product.find(filter);
+    res.json({
+      status: 'success',
+      data: { products },
+    });
+  } catch (error) {
+    res.status(500).json({ status: 'error', message: 'Error fetching products' });
   }
+};
 
-  createProduct = async (req, res) => {
+export const getProductById = async (req, res) => {
     try {
-      const newProduct = await this.productService.createProduct(req.body);
-      res.status(201).json({
-        status: 'success',
-        data: { product: newProduct }
-      });
-    } catch (err) {
-      res.status(400).json({ status: 'fail', message: err.message });
+      const { id } = req.params;
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).json({ status: 'error', message: 'Product not found' });
+      }
+      const product = await Product.findById(id);
+      if (!product) {
+        return res.status(404).json({ status: 'error', message: 'Product not found' });
+      }
+      res.json({ status: 'success', data: { product } });
+    } catch (error) {
+      res.status(500).json({ status: 'error', message: 'Error fetching product details' });
     }
   };
 
-  getAllProducts = async (req, res) => {
-    try {
-      const products = await this.productService.getAllProducts();
-      res.status(200).json({
-        status: 'success',
-        results: products.length,
-        data: { products }
-      });
-    } catch (err) {
-      res.status(404).json({ status: 'fail', message: err.message });
-    }
-  };
+export const createProduct = async (req, res) => {
+  try {
+    const newProduct = new Product(req.body);
+    const savedProduct = await newProduct.save();
+    res.status(201).json({ status: 'success', data: { product: savedProduct } });
+  } catch (error) {
+    res.status(500).json({ status: 'error', message: 'Error creating product' });
+  }
+};
 
-  getProduct = async (req, res) => {
-    try {
-      const product = await this.productService.getProductById(req.params.id);
-      res.status(200).json({
-        status: 'success',
-        data: { product }
-      });
-    } catch (err) {
-      res.status(400).json({ status: 'fail', message: err.message });
+export const updateProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedProduct = await Product.findByIdAndUpdate(id, req.body, { new: true, runValidators: true });
+    if (!updatedProduct) {
+      return res.status(404).json({ status: 'error', message: 'Product not found' });
     }
-  };
+    res.json({ status: 'success', data: { product: updatedProduct } });
+  } catch (error) {
+    res.status(500).json({ status: 'error', message: 'Error updating product' });
+  }
+};
 
-  deleteProduct = async (req, res) => {
-    try {
-      await this.productService.deleteProduct(req.params.id);
-      res.status(200).json({
-        status: 'success',
-        message: 'Product deleted successfully'
-      });
-    } catch (err) {
-      res.status(400).json({ status: 'fail', message: err.message });
+export const deleteProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedProduct = await Product.findByIdAndDelete(id);
+    if (!deletedProduct) {
+      return res.status(404).json({ status: 'error', message: 'Product not found' });
     }
-  };
-
-  updateProduct = async (req, res) => {
-    try {
-      const product = await this.productService.updateProduct(req.params.id, req.body);
-      res.status(200).json({
-        status: 'success',
-        data: { product }
-      });
-    } catch (err) {
-      res.status(400).json({ status: 'fail', message: err.message });
-    }
-  };
-}
-
-module.exports = ProductController;
+    res.status(204).json({ status: 'success', data: null });
+  } catch (error) {
+    res.status(500).json({ status: 'error', message: 'Error deleting product' });
+  }
+};

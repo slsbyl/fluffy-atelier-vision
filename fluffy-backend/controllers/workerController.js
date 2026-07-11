@@ -1,69 +1,44 @@
-class WorkerController {
-  constructor(workerService) {
-    this.workerService = workerService;
+import Worker from '../models/workerModel.js';
+
+export const getAllWorkers = async (req, res) => {
+  try {
+    const workers = await Worker.find().sort({ createdAt: -1 });
+    res.json({ status: 'success', data: { workers } });
+  } catch (error) {
+    res.status(500).json({ status: 'error', message: 'خطأ في جلب العمال' });
   }
+};
 
-  createWorker = async (req, res) => {
-    try {
-      const worker = await this.workerService.createWorker(req.body);
-      res.status(201).json({
-        status: 'success',
-        message: 'Worker created successfully',
-        data: { worker }
-      });
-    } catch (err) {
-      res.status(400).json({ status: 'fail', message: err.message });
+export const createWorker = async (req, res) => {
+  try {
+    const newWorker = new Worker(req.body);
+    const savedWorker = await newWorker.save();
+    res.status(201).json({ status: 'success', data: { worker: savedWorker } });
+  } catch (error) {
+    if (error.name === 'ValidationError') {
+      const messages = Object.values(error.errors).map(val => val.message).join(', ');
+      return res.status(400).json({ status: 'fail', message: `فشل التحقق: ${messages}` });
     }
-  };
+    res.status(500).json({ status: 'error', message: 'خطأ في إضافة العامل' });
+  }
+};
 
-  getAllWorkers = async (req, res) => {
-    try {
-      const workers = await this.workerService.getAllWorkers();
-      res.status(200).json({
-        status: 'success',
-        results: workers.length,
-        data: { workers }
-      });
-    } catch (err) {
-      res.status(404).json({ status: 'fail', message: err.message });
-    }
-  };
+export const updateWorker = async (req, res) => {
+  try {
+    const updatedWorker = await Worker.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    if (!updatedWorker) return res.status(404).json({ status: 'error', message: 'العامل غير موجود' });
+    res.json({ status: 'success', data: { worker: updatedWorker } });
+  } catch (error) {
+    res.status(500).json({ status: 'error', message: 'خطأ في تحديث بيانات العامل' });
+  }
+};
 
-  getWorker = async (req, res) => {
-    try {
-      const worker = await this.workerService.getWorkerById(req.params.id);
-      res.status(200).json({
-        status: 'success',
-        data: { worker }
-      });
-    } catch (err) {
-      res.status(400).json({ status: 'fail', message: err.message });
-    }
-  };
-
-  updateWorker = async (req, res) => {
-    try {
-      const worker = await this.workerService.updateWorker(req.params.id, req.body);
-      res.status(200).json({
-        status: 'success',
-        data: { worker }
-      });
-    } catch (err) {
-      res.status(400).json({ status: 'fail', message: err.message });
-    }
-  };
-
-  deleteWorker = async (req, res) => {
-    try {
-      await this.workerService.deleteWorker(req.params.id);
-      res.status(200).json({
-        status: 'success',
-        message: 'Worker deleted successfully'
-      });
-    } catch (err) {
-      res.status(400).json({ status: 'fail', message: err.message });
-    }
-  };
-}
-
-module.exports = WorkerController;
+export const deleteWorker = async (req, res) => {
+  try {
+    const deletedWorker = await Worker.findByIdAndDelete(req.params.id);
+    if (!deletedWorker) return res.status(404).json({ status: 'error', message: 'العامل غير موجود' });
+    res.status(204).json({ status: 'success', data: null });
+  } catch (error) {
+    res.status(500).json({ status: 'error', message: 'خطأ في حذف العامل' });
+  }
+};

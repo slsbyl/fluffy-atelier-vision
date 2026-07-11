@@ -1,16 +1,10 @@
-const express = require('express');
-const container = require('../container');
+import express from 'express';
+import { getAllOrders, createOrder, restoreStock } from '../controllers/orderController.js';
 
-const orderController = container.resolve('OrderController');
 const router = express.Router();
 
-router.route('/')
-  .get(orderController.getAllOrders)
-  .post(orderController.createOrder);
+router.route('/').get(getAllOrders).post(createOrder);
 
-router.route('/:id')
-  .get(orderController.getOrder)
-  .patch(orderController.updateOrder)
-  .delete(orderController.deleteOrder);
+router.post('/restore-stock', restoreStock);
 
-module.exports = router;
+export default router;

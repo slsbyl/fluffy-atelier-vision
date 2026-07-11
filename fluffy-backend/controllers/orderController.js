@@ -1,87 +1,48 @@
-class OrderController {
-  constructor(orderService) {
-    this.orderService = orderService;
+import Order from '../models/orderModel.js';
+import Product from '../models/productModel.js';
+
+export const getAllOrders = async (req, res) => {
+  try {
+    const orders = await Order.find().sort({ createdAt: -1 });
+    res.json({ status: 'success', data: { orders } });
+  } catch (error) {
+    res.status(500).json({ status: 'error', message: 'Error fetching orders' });
   }
+};
 
-  createOrder = async (req, res) => {
-    try {
-      const newOrder = await this.orderService.createOrder(req.body);
-      res.status(201).json({
-        status: 'success',
-        data: { order: newOrder }
-      });
-    } catch (err) {
-      const statusCode = err.message.includes('not found') ? 404 : 400;
-      res.status(statusCode).json({ status: 'fail', message: err.message });
-    }
-  };
-
-  getAllOrders = async (req, res) => {
-    try {
-      const orders = await this.orderService.getAllOrders();
-      res.status(200).json({
-        status: 'success',
-        results: orders.length,
-        data: { orders }
-      });
-    } catch (err) {
-      res.status(404).json({ status: 'fail', message: err.message });
-    }
-  };
-
-  getOrder = async (req, res) => {
-    try {
-      const order = await this.orderService.getOrderById(req.params.id);
-      if (!order) {
-        return res.status(404).json({
-          status: 'fail',
-          message: 'Order not found'
-        });
+export const createOrder = async (req, res) => {
+  try {
+    const { items } = req.body;
+    // Basic stock check
+    for (const item of items) {
+      const product = await Product.findById(item.productId);
+      if (!product || product.stock < item.quantity) {
+        return res.status(400).json({ status: 'error', message: `Stock not available for ${item.productName}` });
       }
-      res.status(200).json({
-        status: 'success',
-        data: { order }
-      });
-    } catch (err) {
-      res.status(400).json({ status: 'fail', message: err.message });
     }
-  };
 
-  updateOrder = async (req, res) => {
+    const newOrder = new Order(req.body);
+    const savedOrder = await newOrder.save();
+
+    // Decrement stock
+    for (const item of items) {
+      await Product.findByIdAndUpdate(item.productId, { $inc: { stock: -item.quantity, soldCount: item.quantity } });
+    }
+
+    res.status(201).json({ status: 'success', data: { order: savedOrder, orderId: savedOrder._id } });
+  } catch (error) {
+    res.status(500).json({ status: 'error', message: error.message || 'Error creating order' });
+  }
+};
+
+export const restoreStock = async (req, res) => {
     try {
-      const order = await this.orderService.updateOrder(req.params.id, req.body);
-      if (!order) {
-        return res.status(404).json({
-          status: 'fail',
-          message: 'Order not found'
-        });
-      }
-      res.status(200).json({
-        status: 'success',
-        data: { order }
-      });
-    } catch (err) {
-      res.status(400).json({ status: 'fail', message: err.message });
+        const { items } = req.body;
+        for (const item of items) {
+            await Product.findByIdAndUpdate(item.productId, { $inc: { stock: item.quantity, soldCount: -item.quantity } });
+        }
+        res.json({ status: 'success', message: 'Stock restored' });
+    } catch (error) {
+        res.status(500).json({ status: 'error', message: 'Error restoring stock' });
     }
-  };
-
-  deleteOrder = async (req, res) => {
-    try {
-      const order = await this.orderService.deleteOrder(req.params.id);
-      if (!order) {
-        return res.status(404).json({
-          status: 'fail',
-          message: 'Order not found'
-        });
-      }
-      res.status(200).json({
-        status: 'success',
-        message: 'Order deleted successfully'
-      });
-    } catch (err) {
-      res.status(400).json({ status: 'fail', message: err.message });
-    }
-  };
-}
-
-module.exports = OrderController;
+};
