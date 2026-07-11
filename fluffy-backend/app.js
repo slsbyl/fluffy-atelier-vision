@@ -49,6 +49,12 @@ app.use((req, res, next) => {
   res.status(404).json({ status: 'error', message: `API route not found on the server: ${req.originalUrl}` });
 });
 
+// Final error handler - must be defined after all other app.use() and routes
+app.use((err, req, res, next) => {
+  console.error('Unhandled error:', err);
+  res.status(500).json({ status: 'error', message: err.message || 'حدث خطأ في السيرفر' });
+});
+
 const PORT = process.env.PORT || 3000;
 const DATABASE_URL = process.env.DATABASE_URL || process.env.MONGODB_URI || 'mongodb://localhost:27017/fluffy';
 
@@ -56,11 +62,6 @@ async function startServer() {
   try {
     await mongoose.connect(DATABASE_URL);
     console.log('تم الاتصال بقاعدة بيانات MongoDB بنجاح');
-
-    app.use((err, req, res, next) => { // Final error handler
-      console.error('Unhandled error:', err);
-      res.status(500).json({ status: 'error', message: err.message || 'حدث خطأ في السيرفر' });
-    });
 
     app.listen(PORT, () => {
       console.log(`الخادم يعمل على المنفذ ${PORT}`);
