@@ -22,6 +22,7 @@ const allowedOrigins = [
   'http://localhost:8080', // منفذ شائع
   'http://localhost:3000', // منفذ Create React App
   'http://localhost:5173', // منفذ Vite
+  'https://fluffy-atelier-vision.vercel.app', // Vercel Frontend URL
 ];
 
 if (process.env.FRONTEND_URL) {
