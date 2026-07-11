@@ -3,13 +3,8 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import { router as apiRouter, Product, Order, User, Worker, FactoryClient, WholesaleOrder } from './COMPLETE_BACKEND_CODE.js'; // استيراد الراوتر والنماذج من الملف الموحد
 import cors from 'cors';
-import path from 'path';
-import { fileURLToPath } from 'url';
 
 dotenv.config();
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const app = express();
 
@@ -48,17 +43,6 @@ app.options('*', cors(corsOptions));
 
 // API routes should be before the frontend serving
 app.use('/api/v1', apiRouter);
-
-// --- Serve Frontend ---
-// This part serves the built React app
-// Make sure you have run 'npm run build' and the output folder is 'dist'
-const frontendDistPath = path.join(__dirname, 'dist');
-app.use(express.static(frontendDistPath));
-
-// For any other request, serve the index.html file from the React app
-app.get('*', (req, res) => {
-  res.sendFile(path.join(frontendDistPath, 'index.html'));
-});
 
 const PORT = process.env.PORT || 3000;
 const DATABASE_URL = process.env.DATABASE_URL || process.env.MONGODB_URI || 'mongodb://localhost:27017/fluffy';
