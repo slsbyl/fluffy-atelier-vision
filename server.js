@@ -54,6 +54,11 @@ app.get('/health', (req, res) => {
 // API routes should be before the frontend serving
 app.use('/api/v1', apiRouter);
 
+// Add a custom 404 handler for any other route that is not found
+app.use((req, res, next) => {
+  res.status(404).json({ status: 'error', message: `API route not found on the server: ${req.originalUrl}` });
+});
+
 const PORT = process.env.PORT || 3000;
 const DATABASE_URL = process.env.DATABASE_URL || process.env.MONGODB_URI || 'mongodb://localhost:27017/fluffy';
 
