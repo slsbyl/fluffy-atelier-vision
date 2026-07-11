@@ -8,7 +8,6 @@ import { Client } from '@gradio/client';
 import nodemailer from 'nodemailer';
 import jwt from 'jsonwebtoken';
 const router = express.Router();
-console.log('[BACKEND_CODE] Router initialized.');
 
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET || 'a-very-long-and-secure-secret-for-dev', { expiresIn: process.env.JWT_EXPIRES_IN || '90d' });
@@ -181,10 +180,54 @@ const settingsSchema = new mongoose.Schema({
   type: { type: String, required: true, unique: true },
   rates: { type: Object, default: {} }
 });
-console.log('[BACKEND_CODE] All Mongoose models defined.');
 const Settings = mongoose.model('Settings', settingsSchema);
 
-console.log('[BACKEND_CODE] DIAGNOSTIC: Registering Worker routes FIRST.');
+router.get('/products', async (req, res) => {
+  try {
+    const { category } = req.query;
+
+    let filter = {};
+    if (category && category !== 'All') {
+      filter.category = category;
+    }
+
+    const products = await Product.find(filter);
+
+    const productsWithStock = products.map(p => ({
+      _id: p._id,
+      id: p._id.toString(),
+      name: p.name,
+      price: p.price,
+      description: p.description,
+      image: p.image,
+      images: p.images || [],
+      category: p.category,
+      sizes: p.sizes || [],
+      colors: p.colors || [],
+      stock: p.stock,
+      inStock: p.stock > 0,
+      isBestSeller: p.isBestSeller || false,
+      isNewArrival: p.isNewArrival || false,
+      rating: p.rating || 4.5,
+      reviews: p.reviews || 0,
+      soldCount: p.soldCount || 0
+    }));
+
+    res.json({
+      status: 'success',
+      data: {
+        products: productsWithStock
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'خطأ في جلب المنتجات'
+    });
+  }
+});
+
 router.get('/workers', async (req, res) => {
   try {
     const workers = await Worker.find().sort({ createdAt: -1 });
@@ -231,53 +274,6 @@ router.delete('/workers/:id', async (req, res) => {
     res.json({ status: 'success', message: 'تم حذف العامل' });
   } catch (error) {
     res.status(500).json({ status: 'error', message: 'خطأ في حذف العامل' });
-  }
-});
-console.log('[BACKEND_CODE] Worker routes registered.');
-
-router.get('/products', async (req, res) => {
-  try {
-    const { category } = req.query;
-
-    let filter = {};
-    if (category && category !== 'All') {
-      filter.category = category;
-    }
-
-    const products = await Product.find(filter);
-
-    const productsWithStock = products.map(p => ({
-      _id: p._id,
-      id: p._id.toString(),
-      name: p.name,
-      price: p.price,
-      description: p.description,
-      image: p.image,
-      images: p.images || [],
-      category: p.category,
-      sizes: p.sizes || [],
-      colors: p.colors || [],
-      stock: p.stock,
-      inStock: p.stock > 0,
-      isBestSeller: p.isBestSeller || false,
-      isNewArrival: p.isNewArrival || false,
-      rating: p.rating || 4.5,
-      reviews: p.reviews || 0,
-      soldCount: p.soldCount || 0
-    }));
-
-    res.json({
-      status: 'success',
-      data: {
-        products: productsWithStock
-      }
-    });
-  } catch (error) {
-    console.error('Error fetching products:', error);
-    res.status(500).json({
-      status: 'error',
-      message: 'خطأ في جلب المنتجات'
-    });
   }
 });
 
@@ -436,7 +432,6 @@ router.delete('/products/:id', async (req, res) => {
     });
   }
 });
-console.log('[BACKEND_CODE] Product routes registered.');
 
 router.post('/orders', async (req, res) => {
   try {
@@ -719,7 +714,6 @@ router.post('/orders', async (req, res) => {
     });
   }
 });
-console.log('[BACKEND_CODE] Order routes registered.');
 
 router.patch('/products/:productId/stock', async (req, res) => {
   try {
@@ -899,7 +893,6 @@ router.post('/orders/restore-stock', async (req, res) => {
     });
   }
 });
-console.log('[BACKEND_CODE] Stock management routes registered.');
 
 router.get('/orders', async (req, res) => {
   try {
@@ -919,7 +912,6 @@ router.get('/orders', async (req, res) => {
     });
   }
 });
-console.log('[BACKEND_CODE] Final order routes registered.');
 
 router.post('/users/signup', async (req, res) => {
   try {
@@ -1055,7 +1047,6 @@ router.patch('/users/reset-password/:token', async (req, res) => {
     res.status(500).json({ status: 'error', message: 'حدث خطأ ما.' });
   }
 });
-console.log('[BACKEND_CODE] User auth routes registered.');
 
 router.post('/factory-clients/login', async (req, res) => {
   try {
@@ -1120,7 +1111,6 @@ router.post('/factory-clients/:id/payment', async (req, res) => {
     res.status(500).json({ status: 'error', message: 'خطأ في تسجيل الدفعة' });
   }
 });
-console.log('[BACKEND_CODE] Factory client routes registered.');
 
 router.post('/wholesale-orders', async (req, res) => {
   try {
@@ -1147,7 +1137,6 @@ router.get('/wholesale-orders', async (req, res) => {
     res.status(500).json({ status: 'error', message: 'خطأ في جلب الطلبات' });
   }
 });
-console.log('[BACKEND_CODE] Wholesale order GET route registered.');
 
 router.put('/wholesale-orders/:id', async (req, res) => {
   try {
@@ -1200,7 +1189,6 @@ router.put('/wholesale-orders/:id', async (req, res) => {
     res.status(500).json({ status: 'error', message: 'خطأ في تحديث الحالة' });
   }
 });
-console.log('[BACKEND_CODE] Wholesale order PUT route registered.');
 
 router.get('/shipping-rates', async (req, res) => {
   try {
@@ -1226,7 +1214,6 @@ router.put('/shipping-rates', async (req, res) => {
     res.status(500).json({ status: 'error', message: 'خطأ في تحديث أسعار التوصيل' });
   }
 });
-console.log('[BACKEND_CODE] Shipping rates routes registered.');
 
 router.post('/vto', async (req, res) => {
   try {
@@ -1292,6 +1279,5 @@ router.post('/vto', async (req, res) => {
     res.status(500).json({ status: 'error', message: error.message || 'حدث خطأ أثناء معالجة الصورة عبر Hugging Face' });
   }
 });
-console.log('[BACKEND_CODE] VTO route registered. All routes loaded.');
 
 export { router, Product, Order, Worker, User, FactoryClient, WholesaleOrder };
