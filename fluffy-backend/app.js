@@ -22,27 +22,26 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // CORS Settings
-const allowedOrigins = [
-  'http://localhost:8080', // منفذ شائع
-  'http://localhost:3000', // منفذ Create React App
+const whitelist = [
+  'http://localhost:8080',
+  'http://localhost:3000',
   'http://localhost:5173', // منفذ Vite
   'https://fluffy-atelier-vision.vercel.app', // Vercel Frontend URL
 ];
 
 if (process.env.FRONTEND_URL) {
-  allowedOrigins.push(process.env.FRONTEND_URL);
+  whitelist.push(process.env.FRONTEND_URL);
 }
 
 const corsOptions = {
   origin: function (origin, callback) {
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error(`Origin '${origin}' not allowed by CORS`));
+    if (!origin || whitelist.indexOf(origin) !== -1 || origin.endsWith('.up.railway.app') || origin.endsWith('.lovable.app')) {
+      return callback(null, true);
     }
+    // Block others
+    callback(new Error(`Origin '${origin}' not allowed by CORS`));
   },
   credentials: true,
-  optionsSuccessStatus: 200
 };
 
 app.use(cors(corsOptions));
