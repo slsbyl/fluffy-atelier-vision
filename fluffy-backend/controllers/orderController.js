@@ -165,3 +165,19 @@ export const restoreStock = async (req, res) => {
         res.status(500).json({ status: 'error', message: 'Error restoring stock' });
     }
 };
+
+export const deleteOrder = async (req, res) => {
+  try {
+    const order = await Order.findByIdAndDelete(req.params.id);
+
+    if (!order) {
+      return res.status(404).json({ status: 'error', message: 'Order not found' });
+    }
+
+    // 204 No Content is a standard successful response for a DELETE request
+    res.status(204).send();
+  } catch (error) {
+    console.error("Error deleting order:", error);
+    res.status(500).json({ status: 'error', message: 'Error deleting order' });
+  }
+};
