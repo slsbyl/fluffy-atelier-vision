@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
-
+ 
 // --- استيراد الراوترات (قد تحتاجين لتعديل المسارات إذا كانت مختلفة) ---
 import productRouter from './routes/productRoutes.js';
 import orderRouter from './routes/orderRoutes.js';
