@@ -1,6 +1,6 @@
 import User from '../models/userModel.js';
 import jwt from 'jsonwebtoken';
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 import crypto from 'node:crypto';
 
 const signToken = (id) => {
@@ -41,34 +41,58 @@ export const forgotPassword = async (req, res) => {
     try {
         const user = await User.findOne({ email: req.body.email });
         if (!user) {
-            return res.json({ status: 'success', message: 'If user exists, a token has been sent.' });
+            // To prevent user enumeration, we send a generic success message.
+            return res.json({ status: 'success', message: 'If an account with that email exists, a password reset link has been sent.' });
         }
         const resetToken = user.createPasswordResetToken();
         await user.save({ validateBeforeSave: false });
 
         const resetURL = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password/${resetToken}`;
         
-        const message = `Forgot your password? Click the link to reset: ${resetURL}.\nIf you didn't forget your password, please ignore this email!`;
-
+        // --- Send Email via Resend ---
         try {
-            const transporter = nodemailer.createTransport({
-                service: 'gmail',
-                auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_APP_PASSWORD }
-            });
-            await transporter.sendMail({
-                from: 'Fluffy Store <no-reply@fluffy.com>',
+            if (!process.env.RESEND_API_KEY) {
+                throw new Error('Resend API key is not configured on the server.');
+            }
+            const resend = new Resend(process.env.RESEND_API_KEY);
+
+            const emailHtml = `
+              <div dir="rtl" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #fdfcff; color: #555; max-width: 600px; margin: 20px auto; border: 1px solid #fdeef5; border-radius: 12px; overflow: hidden;">
+                <div style="background-color: #fdeef5; padding: 25px; text-align: center;">
+                  <h1 style="margin: 0; color: #c77da7; font-weight: 500; letter-spacing: 2px; font-size: 24px;">FLUFFY</h1>
+                </div>
+                <div style="padding: 30px 35px;">
+                  <h2 style="margin-top: 0; color: #333; font-size: 20px; font-weight: 600;">طلب إعادة تعيين كلمة المرور</h2>
+                  <p style="font-size: 15px; line-height: 1.7;">مرحباً ${user.name},</p>
+                  <p style="font-size: 15px; line-height: 1.7;">لقد تلقينا طلبًا لإعادة تعيين كلمة المرور لحسابك. اضغط على الزر أدناه لإعادة تعيينها. هذا الرابط صالح لمدة 10 دقائق فقط.</p>
+                  <div style="text-align: center; margin: 30px 0;">
+                    <a href="${resetURL}" target="_blank" style="background-color: #c77da7; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 50px; font-weight: bold; font-size: 14px; display: inline-block;">إعادة تعيين كلمة المرور</a>
+                  </div>
+                  <p style="font-size: 15px; line-height: 1.7;">إذا لم تطلب إعادة تعيين كلمة المرور، يمكنك تجاهل هذا البريد الإلكتروني بأمان.</p>
+                </div>
+                <div style="background-color: #f8f9fa; color: #999; text-align: center; padding: 20px; font-size: 12px; border-top: 1px solid #fdeef5;">
+                  <p style="margin: 0;">&copy; ${new Date().getFullYear()} Fluffy Store. جميع الحقوق محفوظة.</p>
+                </div>
+              </div>
+            `;
+
+            await resend.emails.send({
+                from: 'Fluffy Store <onboarding@resend.dev>',
                 to: user.email,
-                subject: 'Your password reset token (valid for 10 min)',
-                text: message,
+                subject: 'إعادة تعيين كلمة المرور الخاصة بك في Fluffy',
+                html: emailHtml,
             });
+
             res.json({ status: 'success', message: 'Token sent to email!' });
         } catch (err) {
+            console.error("Failed to send password reset email:", err);
             user.passwordResetToken = undefined;
             user.passwordResetExpires = undefined;
             await user.save({ validateBeforeSave: false });
             return res.status(500).json({ status: 'error', message: 'There was an error sending the email. Try again later!' });
         }
     } catch (err) {
+        console.error("Forgot password main error:", err);
         res.status(500).json({ status: 'error', message: 'Something went wrong' });
     }
 };
