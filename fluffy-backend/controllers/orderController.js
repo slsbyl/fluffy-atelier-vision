@@ -30,8 +30,15 @@ export const createOrder = async (req, res) => {
       await Product.findByIdAndUpdate(item.productId, { $inc: { stock: -item.quantity, soldCount: item.quantity } });
     }
 
+    // --- Send response to client immediately ---
+    // The user should not wait for the email to be sent.
+    res.status(201).json({ status: 'success', data: { order: savedOrder, orderId: savedOrder._id } });
+
+    // --- Try to send the confirmation email in the background ---
+
     // --- Send Confirmation Email ---
     if (email && process.env.EMAIL_USER && process.env.EMAIL_APP_PASSWORD) {
+      console.log(`Attempting to send confirmation email to: ${email}`);
       try {
         let itemsHtml = '';
         const hexToName = {
@@ -120,15 +127,26 @@ export const createOrder = async (req, res) => {
         await transporter.sendMail(mailOptions);
         console.log(`Confirmation email sent successfully to: ${email}`);
       } catch (emailError) {
-        console.error("Failed to send confirmation email:", emailError);
+        console.error("Failed to send confirmation email in background:", emailError);
         // We don't stop the process, just log the error.
       }
     }
+    else {
+        console.log('Skipping email sending. Reason:');
+        if (!email) console.log('- Email address was not provided in the order request.');
+        if (!process.env.EMAIL_USER) console.log('- EMAIL_USER environment variable is not set on the server.');
+        if (!process.env.EMAIL_APP_PASSWORD) console.log('- EMAIL_APP_PASSWORD environment variable is not set on the server.');
+    }
     // --- End Send Confirmation Email ---
 
-    res.status(201).json({ status: 'success', data: { order: savedOrder, orderId: savedOrder._id } });
   } catch (error) {
-    res.status(500).json({ status: 'error', message: error.message || 'Error creating order' });
+    // If an error happens before we send the response, send an error response.
+    if (!res.headersSent) {
+      res.status(500).json({ status: 'error', message: error.message || 'Error creating order' });
+    } else {
+      // If the response has already been sent, we can only log the error.
+      console.error("Error after response sent during order creation:", error);
+    }
   }
 };
 
