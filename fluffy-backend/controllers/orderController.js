@@ -1,6 +1,6 @@
 import Order from '../models/orderModel.js';
 import Product from '../models/productModel.js';
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 
 export const getAllOrders = async (req, res) => {
   try {
@@ -37,10 +37,10 @@ export const createOrder = async (req, res) => {
     // --- Try to send the confirmation email in the background ---
 
     // --- Send Confirmation Email ---
-    if (email && process.env.EMAIL_USER && process.env.EMAIL_APP_PASSWORD) {
-      console.log(`Attempting to send confirmation email to: ${email}`);
+    if (email && process.env.RESEND_API_KEY) {
+      console.log(`Attempting to send confirmation email to: ${email} via Resend`);
       try {
-        let itemsHtml = '';
+        const resend = new Resend(process.env.RESEND_API_KEY);
         const hexToName = {
           '#ff0000': 'أحمر', '#0000ff': 'أزرق', '#008000': 'أخضر', '#000000': 'أسود',
           '#ffffff': 'أبيض', '#ffff00': 'أصفر', '#ffa500': 'برتقالي', '#ffc0cb': 'وردي',
@@ -48,6 +48,7 @@ export const createOrder = async (req, res) => {
           '#f5f5dc': 'بيج', '#ffd700': 'ذهبي', '#c0c0c0': 'فضي'
         };
 
+        let itemsHtml = '';
         for (const item of savedOrder.items) {
           let colorDisplay = item.color || '-';
           if (item.color && item.color.startsWith('#')) {
@@ -69,19 +70,7 @@ export const createOrder = async (req, res) => {
           `;
         }
 
-        const transporter = nodemailer.createTransport({
-          service: 'gmail',
-          auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_APP_PASSWORD
-          }
-        });
-
-        const mailOptions = {
-          from: `"Fluffy Store" <${process.env.EMAIL_USER}>`,
-          to: email,
-          subject: 'تم تأكيد طلبك من Fluffy',
-          html: `
+        const emailHtml = `
             <div dir="rtl" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #fdfcff; color: #555; max-width: 600px; margin: 20px auto; border: 1px solid #fdeef5; border-radius: 12px; overflow: hidden;">
               <div style="background-color: #fdeef5; padding: 25px; text-align: center;">
                 <h1 style="margin: 0; color: #c77da7; font-weight: 500; letter-spacing: 2px; font-size: 24px;">FLUFFY</h1>
@@ -120,20 +109,23 @@ export const createOrder = async (req, res) => {
                 <p style="margin: 0;">في حال وجود أي استفسار، لا تتردد في التواصل معنا.</p>
                 <p style="margin: 8px 0 0 0;">&copy; ${new Date().getFullYear()} Fluffy Store. جميع الحقوق محفوظة.</p>
               </div>
-            </div>`
-        };
+            </div>`;
 
-        await transporter.sendMail(mailOptions);
+        await resend.emails.send({
+          from: 'Fluffy Store <onboarding@resend.dev>',
+          to: [email],
+          subject: 'تم تأكيد طلبك من Fluffy',
+          html: emailHtml,
+        });
 
-        console.log(`Confirmation email sent successfully to: ${email}`);
+        console.log(`Confirmation email sent successfully to: ${email} via Resend.`);
       } catch (emailError) {
-        console.error("Failed to send confirmation email in background:", emailError);
+        console.error("Failed to send confirmation email via Resend:", emailError);
       }
     } else {
         console.log('Skipping email sending. Reason:');
         if (!email) console.log('- Email address was not provided in the order request.');
-        if (!process.env.EMAIL_USER) console.log('- EMAIL_USER environment variable is not set on the server.');
-        if (!process.env.EMAIL_APP_PASSWORD) console.log('- EMAIL_APP_PASSWORD environment variable is not set on the server.');
+        if (!process.env.RESEND_API_KEY) console.log('- RESEND_API_KEY environment variable is not set on the server.');
     }
     // --- End Send Confirmation Email ---
 
