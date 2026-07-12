@@ -127,7 +127,11 @@ export const createOrder = async (req, res) => {
         await transporter.sendMail(mailOptions);
         console.log(`Confirmation email sent successfully to: ${email}`);
       } catch (emailError) {
-        console.error("Failed to send confirmation email in background:", emailError);
+        console.error("--- FAILED TO SEND CONFIRMATION EMAIL ---");
+        console.error(`Timestamp: ${new Date().toISOString()}`);
+        console.error(`Recipient: ${email}`);
+        console.error("Nodemailer Error:", emailError);
+        console.error("--- END OF EMAIL ERROR ---");
         // We don't stop the process, just log the error.
       }
     }
