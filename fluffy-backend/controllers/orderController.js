@@ -120,22 +120,16 @@ export const createOrder = async (req, res) => {
                 <p style="margin: 0;">في حال وجود أي استفسار، لا تتردد في التواصل معنا.</p>
                 <p style="margin: 8px 0 0 0;">&copy; ${new Date().getFullYear()} Fluffy Store. جميع الحقوق محفوظة.</p>
               </div>
-            </div>
-          `
+            </div>`
         };
 
         await transporter.sendMail(mailOptions);
+
         console.log(`Confirmation email sent successfully to: ${email}`);
       } catch (emailError) {
-        console.error("--- FAILED TO SEND CONFIRMATION EMAIL ---");
-        console.error(`Timestamp: ${new Date().toISOString()}`);
-        console.error(`Recipient: ${email}`);
-        console.error("Nodemailer Error:", emailError);
-        console.error("--- END OF EMAIL ERROR ---");
-        // We don't stop the process, just log the error.
+        console.error("Failed to send confirmation email in background:", emailError);
       }
-    }
-    else {
+    } else {
         console.log('Skipping email sending. Reason:');
         if (!email) console.log('- Email address was not provided in the order request.');
         if (!process.env.EMAIL_USER) console.log('- EMAIL_USER environment variable is not set on the server.');
