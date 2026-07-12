@@ -37,11 +37,25 @@ export const createOrder = async (req, res) => {
 
 export const restoreStock = async (req, res) => {
     try {
-        const { items } = req.body;
+        const { items, orderId } = req.body;
+        if (!items || !Array.isArray(items) || !orderId) {
+            return res.status(400).json({ status: 'error', message: 'Invalid data for restoring stock.' });
+        }
+
         for (const item of items) {
             await Product.findByIdAndUpdate(item.productId, { $inc: { stock: item.quantity, soldCount: -item.quantity } });
         }
-        res.json({ status: 'success', message: 'Stock restored' });
+
+        // Find the order and update its status to 'Cancelled'
+        const updatedOrder = await Order.findByIdAndUpdate(
+            orderId,
+            { status: 'ملغي' }, // Using the Arabic status for consistency
+            { new: true }
+        );
+
+        if (!updatedOrder) return res.status(404).json({ status: 'error', message: 'Order not found to update status.' });
+
+        res.json({ status: 'success', message: 'Order has been cancelled and stock restored.' });
     } catch (error) {
         res.status(500).json({ status: 'error', message: 'Error restoring stock' });
     }
