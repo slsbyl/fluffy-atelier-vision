@@ -74,7 +74,10 @@ export const createOrder = async (req, res) => {
           auth: {
             user: process.env.EMAIL_USER,
             pass: process.env.EMAIL_APP_PASSWORD
-          }
+          },
+          // --- Enable Detailed Debugging ---
+          logger: true,
+          debug: true
         });
 
         const mailOptions = {
