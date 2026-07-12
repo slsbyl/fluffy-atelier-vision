@@ -23,21 +23,15 @@ const orderSchema = new mongoose.Schema({
   date: { type: Date, default: Date.now }
 }, { timestamps: true });
 
-// This middleware calculates the total amount before saving the order.
-// It's a standard function (not async) and uses next() to proceed.
-orderSchema.pre('save', function(next) {
-  try {
-    if (this.items && this.items.length > 0) {
-      const itemsTotal = this.items.reduce((acc, item) => {
-        const price = Number(item.price) || 0;
-        const quantity = Number(item.quantity) || 0;
-        return acc + (price * quantity);
-      }, 0);
-      this.totalAmount = itemsTotal + (this.shippingFee || 0);
-    }
-    next(); // Proceed to save
-  } catch (error) {
-    next(error); // Pass error to the next middleware
+// This middleware calculates the total amount before saving the order using the modern async pattern.
+orderSchema.pre('save', async function() {
+  if (this.items && this.items.length > 0) {
+    const itemsTotal = this.items.reduce((acc, item) => {
+      const price = Number(item.price) || 0;
+      const quantity = Number(item.quantity) || 0;
+      return acc + (price * quantity);
+    }, 0);
+    this.totalAmount = itemsTotal + (this.shippingFee || 0);
   }
 });
 
