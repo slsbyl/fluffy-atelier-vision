@@ -105,6 +105,11 @@ export const resetPassword = async (req, res) => {
         if (!user) {
             return res.status(400).json({ status: 'error', message: 'Token is invalid or has expired' });
         }
+
+        if (req.body.password !== req.body.passwordConfirm) {
+            return res.status(400).json({ status: 'error', message: 'Passwords do not match.' });
+        }
+
         user.password = req.body.password;
         user.passwordResetToken = undefined;
         user.passwordResetExpires = undefined;
