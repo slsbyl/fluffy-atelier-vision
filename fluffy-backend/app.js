@@ -2,6 +2,10 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import { setDefaultResultOrder } from 'node:dns';
+
+// Force Node.js to prefer IPv4 addresses to solve ENETUNREACH errors on Railway
+setDefaultResultOrder('ipv4first');
 
 // Import Routers
 import productRouter from './routes/productRoutes.js';
