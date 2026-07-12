@@ -185,6 +185,23 @@ const handleSaveProduct = async (productData: any) => {
   }
 };
 
+  const handleDeleteOrder = async (orderId: string) => {
+    // رسالة تأكيد قبل الحذف
+    if (!window.confirm('هل أنتِ متأكدة من رغبتك في حذف هذا الطلب نهائياً؟')) {
+      return;
+    }
+
+    try {
+      await axios.delete(`${API_BASE_URL}/orders/${orderId}`);
+      // تحديث القائمة فوراً لإخفاء الطلب المحذوف
+      setOrders(currentOrders => currentOrders.filter(order => order._id !== orderId));
+      alert('تم حذف الطلب بنجاح.');
+    } catch (error) {
+      console.error('Failed to delete order', error);
+      alert('حدث خطأ أثناء حذف الطلب.');
+    }
+  };
+
   const handleDeleteProduct = async (id: string) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
       try {
@@ -443,8 +460,13 @@ const handleSaveProduct = async (productData: any) => {
                   <div className="space-y-6">
                     {orders.map((order) => (
                       <div key={order._id} className="border border-border rounded-2xl p-4 md:p-6 bg-secondary/10 relative overflow-hidden">
+                        <div className="absolute top-4 right-4">
+                          <Button variant="destructive" size="icon" className="h-8 w-8 rounded-full" onClick={() => handleDeleteOrder(order._id)}>
+                            <Trash2 size={14} />
+                          </Button>
+                        </div>
                         <div className="absolute top-0 left-0 w-1.5 h-full bg-primary"></div>
-                        <div className="flex flex-col md:flex-row justify-between gap-4 border-b border-border/50 pb-4 mb-4">
+                        <div className="flex flex-col md:flex-row justify-between gap-4 border-b border-border/50 pb-4 mb-4 pr-12">
                           <div>
                             <h3 className="font-display text-lg">Order #{String(order._id).slice(-6).toUpperCase()}</h3>
                             <p className="text-xs text-muted-foreground font-body mt-1">
