@@ -1,4 +1,5 @@
 import FactoryClient from '../models/factoryClientModel.js';
+import WholesaleOrder from '../models/wholesaleOrderModel.js';
 
 export const getAllFactoryClients = async (req, res) => {
   try {
@@ -56,4 +57,26 @@ export const recordPayment = async (req, res) => {
     } catch (error) {
         res.status(500).json({ status: 'error', message: 'Error recording payment' });
     }
+};
+
+export const deleteFactoryClient = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const client = await FactoryClient.findById(id);
+    if (!client) {
+      return res.status(404).json({ status: 'error', message: 'Client not found' });
+    }
+
+    // Important: Also delete associated wholesale orders to prevent orphaned data
+    await WholesaleOrder.deleteMany({ clientId: id });
+
+    // Finally, delete the client
+    await FactoryClient.findByIdAndDelete(id);
+
+    res.status(204).send();
+  } catch (error) {
+    console.error("Error deleting factory client:", error);
+    res.status(500).json({ status: 'error', message: 'Error deleting client' });
+  }
 };

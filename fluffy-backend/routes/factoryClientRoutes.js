@@ -4,14 +4,15 @@ import {
   createFactoryClient,
   getFactoryClientById,
   loginFactoryClient,
-  recordPayment
+  recordPayment,
+  deleteFactoryClient
 } from '../controllers/factoryClientController.js';
 
 const router = express.Router();
 
 router.route('/').get(getAllFactoryClients).post(createFactoryClient);
 router.post('/login', loginFactoryClient);
-router.route('/:id').get(getFactoryClientById);
+router.route('/:id').get(getFactoryClientById).delete(deleteFactoryClient);
 router.post('/:id/payment', recordPayment);
 
 export default router;

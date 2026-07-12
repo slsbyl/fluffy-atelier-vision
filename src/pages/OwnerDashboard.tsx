@@ -284,6 +284,22 @@ const handleSaveProduct = async (productData: any) => {
     }
   };
 
+  const handleDeleteFactoryClient = async (clientId: string, event: React.MouseEvent) => {
+    event.stopPropagation(); // Prevent opening the client details view
+    if (window.confirm('هل أنتِ متأكدة من حذف هذا العميل وجميع طلباته نهائياً؟ هذا الإجراء لا يمكن التراجع عنه.')) {
+      try {
+        await axios.delete(`${API_BASE_URL}/factory-clients/${clientId}`);
+        setFactoryClients(currentClients => currentClients.filter(client => client._id !== clientId));
+        // Also remove their orders from the state to keep UI consistent
+        setWholesaleOrders(currentOrders => currentOrders.filter(order => order.clientId !== clientId));
+        alert('تم حذف العميل وطلباته بنجاح.');
+      } catch (error) {
+        console.error('Failed to delete factory client', error);
+        alert('حدث خطأ أثناء حذف العميل.');
+      }
+    }
+  };
+
   const recordClientPayment = async (clientId: string) => {
     const amount = window.prompt(`أدخلي المبلغ الذي سدده العميل:`);
     if (amount && !isNaN(Number(amount)) && Number(amount) > 0) {
@@ -571,7 +587,16 @@ const handleSaveProduct = async (productData: any) => {
                         const remainingDebt = Math.max(0, client.totalDebt - client.paidAmount);
                         const clientOrdersCount = wholesaleOrders.filter(o => o.clientId === client._id).length;
                         return (
-                          <div key={client._id} onClick={() => setSelectedClientDetails(client)} className="border border-border rounded-2xl p-5 bg-secondary/10 cursor-pointer hover:border-primary/50 transition-colors group">
+                          <div key={client._id} onClick={() => setSelectedClientDetails(client)} className="border border-border rounded-2xl p-5 bg-secondary/10 cursor-pointer hover:border-primary/50 transition-colors group relative">
+                            <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button 
+                                    onClick={(e) => handleDeleteFactoryClient(client._id, e)} 
+                                    className="p-2 bg-background border border-border rounded-full text-muted-foreground hover:text-destructive shadow-soft" 
+                                    title="حذف العميل"
+                                >
+                                    <Trash2 size={14} />
+                                </button>
+                            </div>
                             <h3 className="font-display text-lg text-foreground flex items-center gap-2 mb-1"><Building2 size={16}/> {client.companyName}</h3>
                             <p className="text-xs font-body text-muted-foreground mb-4">{client.ownerName}</p>
                             
