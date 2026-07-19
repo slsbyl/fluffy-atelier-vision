@@ -125,7 +125,7 @@ const AIPredictionsTab = ({ orders, wholesaleOrders, products }: AIPredictionsTa
       <div className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 gap-6">
         <StatCard 
           label="Next Month's Revenue Forecast"
-          value={`$${Math.round(predictions.revenueForecast).toLocaleString()}`}
+          value={`${Math.round(predictions.revenueForecast).toLocaleString()} EGP`}
           icon={<DollarSign size={24} />}
           note="محسوبة بناءً على متوسط إيرادات آخر 3 أشهر مع إضافة نسبة نمو متوقعة."
         />
