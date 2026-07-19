@@ -122,7 +122,7 @@ const Cart = () => {
 
         toast({
           title: "تم تأكيد الطلب بنجاح",
-          description: `شكراً ${customerName}! تم تأكيد طلبك بقيمة $${finalTotal}. سيتم التوصيل قريباً.`,
+          description: `Thank you ${customerName}! Your order for EGP ${finalTotal} has been confirmed. It will be delivered soon.`,
         });
       } else {
         toast({
@@ -182,10 +182,10 @@ const Cart = () => {
             to="/shop"
             className="inline-flex items-center gap-2 text-sm font-body text-muted-foreground hover:text-primary transition-colors mb-8"
           >
-            <ArrowLeft size={16} /> المتابعة في التسوق
+            <ArrowLeft size={16} /> Continue Shopping
           </Link>
 
-          <h1 className="font-display text-3xl text-foreground mb-8">سلة التسوق</h1>
+          <h1 className="font-display text-3xl text-foreground mb-8">Shopping Cart</h1>
 
           {lastPlacedOrder ? (
             <motion.div 
@@ -196,8 +196,8 @@ const Cart = () => {
               <div className="w-20 h-20 bg-primary/10 text-primary rounded-full flex items-center justify-center mx-auto mb-6">
                 <Check size={40} />
               </div>
-              <h2 className="font-display text-2xl text-foreground mb-2">تم تأكيد طلبك بنجاح!</h2>
-              <p className="text-sm font-body text-muted-foreground mb-8">رقم الطلب: {lastPlacedOrder.id}</p>
+              <h2 className="font-display text-2xl text-foreground mb-2">Your order has been confirmed successfully!</h2>
+              <p className="text-sm font-body text-muted-foreground mb-8">Order Number: {lastPlacedOrder.id}</p>
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button 
@@ -206,7 +206,7 @@ const Cart = () => {
                   onClick={handleReturnOrder}
                   disabled={isSubmitting}
                 >
-                  <RotateCcw size={16} className="mr-2" /> إرجاع الطلب (إلغاء)
+                  <RotateCcw size={16} className="mr-2" /> Return Order (Cancel)
                 </Button>
                 <Button className="rounded-full font-body" onClick={() => setLastPlacedOrder(null)}>
                   العودة للتسوق
@@ -216,9 +216,9 @@ const Cart = () => {
           ) : items.length === 0 ? (
             <div className="text-center py-20">
               <ShoppingBag size={48} className="text-muted-foreground/30 mx-auto mb-4" />
-              <p className="font-body text-muted-foreground">سلتك فارغة</p>
+              <p className="font-body text-muted-foreground">Your cart is empty</p>
               <Button asChild className="rounded-full mt-6 font-body tracking-wider uppercase text-sm">
-                <Link to="/shop">ابدأ التسوق</Link>
+                <Link to="/shop">Start Shopping</Link>
               </Button>
             </div>
           ) : (
@@ -246,12 +246,12 @@ const Cart = () => {
                               {item.productName}
                             </h3>
                             <p className="text-xs font-body text-muted-foreground mt-1 flex items-center gap-2">
-                              <span>المقاس: {item.size}</span>
+                              <span>Size: {item.size}</span>
                               {item.color && (
                                 <>
                                   <span>|</span>
                                   <span className="flex items-center gap-1">
-                                    اللون: 
+                                    Color: 
                                     {item.color.startsWith('#') ? (
                                       <span className="w-3 h-3 rounded-full border border-border inline-block" style={{ backgroundColor: item.color }} />
                                     ) : (
@@ -294,7 +294,7 @@ const Cart = () => {
                               </button>
                             </div>
                             <p className="font-display text-base text-foreground">
-                              ${item.price * item.quantity}
+                              EGP {item.price * item.quantity}
                             </p>
                           </div>
                         </div>
@@ -310,15 +310,15 @@ const Cart = () => {
 
                   <div className="mt-8 pt-6 border-t border-border">
                     <div className="flex justify-between items-center mb-6">
-                      <span className="font-display text-lg text-foreground">الإجمالي</span>
-                      <span className="font-display text-2xl text-foreground">${total}</span>
+                      <span className="font-display text-lg text-foreground">Total</span>
+                      <span className="font-display text-2xl text-foreground">EGP {total}</span>
                     </div>
                     <Button
                       size="lg"
                       className="w-full rounded-2xl font-body tracking-wider uppercase text-sm h-14"
                       onClick={() => setShowCheckout(true)}
                     >
-                      تأكيد الطلب
+                      Confirm Order
                     </Button>
                   </div>
                 </>
@@ -346,7 +346,7 @@ const Cart = () => {
               className="bg-card rounded-3xl border border-border shadow-elevated w-full max-w-md p-6"
             >
               <div className="flex items-center justify-between mb-6">
-                <h2 className="font-display text-xl text-foreground">تأكيد الطلب</h2>
+                <h2 className="font-display text-xl text-foreground">Confirm Order</h2>
                 <button
                   onClick={() => setShowCheckout(false)}
                   className="p-2 rounded-xl hover:bg-secondary transition-colors"
@@ -357,12 +357,12 @@ const Cart = () => {
               <form onSubmit={handleConfirmOrder} className="space-y-4">
                 <div>
                   <Label className="text-xs font-body tracking-wider uppercase text-muted-foreground">
-                    الاسم الكامل
+                    Full Name
                   </Label>
                   <Input
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
-                    placeholder="اسمك"
+                    placeholder="Your Name"
                     className="rounded-xl mt-1"
                     required
                     disabled={isSubmitting}
@@ -370,13 +370,13 @@ const Cart = () => {
                 </div>
                 <div>
                   <Label className="text-xs font-body tracking-wider uppercase text-muted-foreground">
-                    البريد الإلكتروني
+                    Email
                   </Label>
                   <Input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="البريد الإلكتروني (لتلقي تفاصيل الطلب)"
+                    placeholder="Email (to receive order details)"
                     className="rounded-xl mt-1 text-left"
                     required
                     disabled={isSubmitting}
@@ -384,7 +384,7 @@ const Cart = () => {
                 </div>
                 <div>
                   <Label className="text-xs font-body tracking-wider uppercase text-muted-foreground">
-                    رقم الهاتف
+                    Phone Number
                   </Label>
                   <Input
                     value={phone}
@@ -397,7 +397,7 @@ const Cart = () => {
                 </div>
                 <div>
                   <Label className="text-xs font-body tracking-wider uppercase text-muted-foreground">
-                    المحافظة
+                    Governorate
                   </Label>
                   <select
                     value={governorate}
@@ -406,27 +406,27 @@ const Cart = () => {
                     required
                     disabled={isSubmitting}
                   >
-                    <option value="">اختر المحافظة...</option>
+                    <option value="">Select Governorate...</option>
                     {EGYPT_GOVERNORATES.map(gov => (
-                      <option key={gov} value={gov}>{gov} - ${shippingRates[gov] || 0}</option>
+                      <option key={gov} value={gov}>{gov} - EGP {shippingRates[gov] || 0}</option>
                     ))}
                   </select>
                 </div>
                 <div>
                   <Label className="text-xs font-body tracking-wider uppercase text-muted-foreground">
-                    عنوان التوصيل
+                    Delivery Address
                   </Label>
                   <Input
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
-                    placeholder="العنوان الكامل"
+                    placeholder="Full Address"
                     className="rounded-xl mt-1"
                     required
                     disabled={isSubmitting}
                   />
                 </div>
                 <div className="bg-secondary/50 rounded-xl p-4">
-                  <p className="text-xs font-body text-muted-foreground mb-2">ملخص الطلب</p>
+                  <p className="text-xs font-body text-muted-foreground mb-2">Order Summary</p>
                   {items.map((item, i) => (
                     <div key={i} className="flex justify-between text-sm font-body text-foreground mb-1">
                       <span className="flex items-center gap-1">
@@ -440,22 +440,22 @@ const Cart = () => {
                         )}
                         x{item.quantity}
                       </span>
-                      <span>${item.price * item.quantity}</span>
+                      <span>EGP {item.price * item.quantity}</span>
                     </div>
                   ))}
                   <div className="border-t border-border mt-2 pt-2 flex justify-between font-display text-foreground text-sm">
-                    <span>قيمة المنتجات</span>
-                    <span>${total}</span>
+                    <span>Subtotal</span>
+                    <span>EGP {total}</span>
                   </div>
                   {governorate && (
                     <div className="flex justify-between font-display text-foreground text-sm mt-1">
-                      <span>التوصيل ({governorate})</span>
-                      <span>${shippingFee}</span>
+                      <span>Shipping ({governorate})</span>
+                      <span>EGP {shippingFee}</span>
                     </div>
                   )}
                   <div className="border-t border-border mt-2 pt-2 flex justify-between font-display text-foreground text-lg">
-                    <span>الإجمالي الكلي</span>
-                    <span className="text-primary">${finalTotal}</span>
+                    <span>Grand Total</span>
+                    <span className="text-primary">EGP {finalTotal}</span>
                   </div>
                 </div>
                 <div className="flex gap-3 pt-2">
@@ -466,7 +466,7 @@ const Cart = () => {
                     className="flex-1 rounded-full font-body text-xs"
                     disabled={isSubmitting}
                   >
-                    إلغاء
+                    Cancel
                   </Button>
                   <Button
                     type="submit"
@@ -476,10 +476,10 @@ const Cart = () => {
                     {isSubmitting ? (
                       <>
                         <Loader size={16} className="mr-2 animate-spin" />
-                        جاري المعالجة...
+                        Processing...
                       </>
                     ) : (
-                      "تأكيد الطلب"
+                      "Confirm Order"
                     )}
                   </Button>
                 </div>

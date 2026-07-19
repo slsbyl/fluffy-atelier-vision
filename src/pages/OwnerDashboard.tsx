@@ -380,10 +380,10 @@ const handleSaveProduct = async (productData: any) => {
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-8">
           <StatCard label="Total Orders" value={String(orders.length)} icon={<ShoppingBag size={18} />} trend="+8%" />
-          <StatCard label="Revenue" value={`$${totalRevenue.toLocaleString()}`} icon={<DollarSign size={18} />} trend="+12%" />
+          <StatCard label="Revenue" value={`EGP ${totalRevenue.toLocaleString()}`} icon={<DollarSign size={18} />} trend="+12%" />
           <StatCard label="Products" value={String(managedProducts.length)} icon={<Package size={18} />} />
           <StatCard label="Workers" value={String(workers.length)} icon={<Users size={18} />} />
-          <StatCard label="Factory Debts" value={`$${totalFactoryDebt.toLocaleString()}`} icon={<Wallet size={18} />} accent="bg-destructive/10 text-destructive" />
+          <StatCard label="Factory Debts" value={`EGP ${totalFactoryDebt.toLocaleString()}`} icon={<Wallet size={18} />} accent="bg-destructive/10 text-destructive" />
         </div>
 
         <div className="flex gap-2 mb-8 overflow-x-auto pb-2 scrollbar-hide">
@@ -433,7 +433,7 @@ const handleSaveProduct = async (productData: any) => {
                               </div>
                             </td>
                             <td className="py-3 px-2 text-sm font-body text-muted-foreground">{product.category}</td>
-                            <td className="py-3 px-2 text-sm font-body text-foreground">${product.price}</td>
+                            <td className="py-3 px-2 text-sm font-body text-foreground">EGP {product.price}</td>
                             <td className="py-3 px-2">
                               <div className="flex items-center gap-2">
                                 <button
@@ -499,7 +499,7 @@ const handleSaveProduct = async (productData: any) => {
                             }`}>
                               {order.status || 'Pending'}
                             </span>
-                            <p className="font-display text-xl text-primary mt-2">${order.totalAmount}</p>
+                            <p className="font-display text-xl text-primary mt-2">EGP {order.totalAmount}</p>
                           </div>
                         </div>
 
@@ -514,7 +514,7 @@ const handleSaveProduct = async (productData: any) => {
                                 <>
                                   <div className="border-t border-border/50 my-2"></div>
                                   <p className="text-sm font-body"><span className="text-muted-foreground inline-block w-20">Gov/City:</span> <span className="font-medium text-foreground">{order.governorate}</span></p>
-                                  <p className="text-sm font-body"><span className="text-muted-foreground inline-block w-20">Shipping:</span> <span className="font-medium text-foreground">${order.shippingFee}</span></p>
+                                  <p className="text-sm font-body"><span className="text-muted-foreground inline-block w-20">Shipping:</span> <span className="font-medium text-foreground">EGP {order.shippingFee}</span></p>
                                 </>
                               )}
                             </div>
@@ -543,7 +543,7 @@ const handleSaveProduct = async (productData: any) => {
                                   </div>
                                   <div className="text-right">
                                     <p className="text-xs font-body text-muted-foreground mb-1">Qty: <span className="font-medium text-foreground text-sm">{item.quantity}</span></p>
-                                    <p className="text-sm text-primary font-display">${item.price * item.quantity}</p>
+                                    <p className="text-sm text-primary font-display">EGP {item.price * item.quantity}</p>
                                   </div>
                                 </div>
                               ))}
@@ -567,15 +567,15 @@ const handleSaveProduct = async (productData: any) => {
                         <p className="text-xs font-body text-muted-foreground mt-1">Manage B2B accounts and debts</p>
                       </div>
                       <Button size="sm" className="rounded-full font-body text-xs gap-2" onClick={() => setShowClientModal(true)}>
-                        <Plus size={14} /> إضافة عميل
+                        <Plus size={14} /> Add Client
                       </Button>
                     </div>
                     
                     <div className="relative mb-6">
                       <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
                       <input 
-                        type="text" 
-                        placeholder="ابحثي باسم الشركة أو المالك..." 
+                        type="text"
+                        placeholder="Search by company or owner name..."
                         value={clientSearch}
                         onChange={(e) => setClientSearch(e.target.value)}
                         className="w-full h-12 pl-12 pr-4 rounded-xl border border-input bg-background text-sm font-body focus:outline-none focus:ring-2 focus:ring-primary"
@@ -590,22 +590,22 @@ const handleSaveProduct = async (productData: any) => {
                           <div key={client._id} onClick={() => setSelectedClientDetails(client)} className="border border-border rounded-2xl p-5 bg-secondary/10 cursor-pointer hover:border-primary/50 transition-colors group relative">
                             <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
                                 <button 
-                                    onClick={(e) => handleDeleteFactoryClient(client._id, e)} 
-                                    className="p-2 bg-background border border-border rounded-full text-muted-foreground hover:text-destructive shadow-soft" 
-                                    title="حذف العميل"
+                                    onClick={(e) => handleDeleteFactoryClient(client._id, e)}
+                                    className="p-2 bg-background border border-border rounded-full text-muted-foreground hover:text-destructive shadow-soft"
+                                    title="Delete Client"
                                 >
                                     <Trash2 size={14} />
                                 </button>
                             </div>
                             <h3 className="font-display text-lg text-foreground flex items-center gap-2 mb-1"><Building2 size={16}/> {client.companyName}</h3>
                             <p className="text-xs font-body text-muted-foreground mb-4">{client.ownerName}</p>
-                            
+
                             <div className="flex justify-between items-end border-t border-border/50 pt-3">
                               <div>
-                                <p className="text-[10px] uppercase text-muted-foreground">{remainingDebt < 0 ? 'رصيد العميل (دائن)' : 'عليه مديونية'}</p>
-                                <p className={`font-display text-lg ${remainingDebt > 0 ? 'text-destructive' : 'text-green-600'}`}>${Math.abs(remainingDebt).toLocaleString()}</p>
+                                <p className="text-[10px] uppercase text-muted-foreground">{remainingDebt < 0 ? 'Client Credit' : 'Debt Due'}</p>
+                                <p className={`font-display text-lg ${remainingDebt > 0 ? 'text-destructive' : 'text-green-600'}`}>EGP {Math.abs(remainingDebt).toLocaleString()}</p>
                               </div>
-                              <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded font-body">{clientOrdersCount} طلبات</span>
+                              <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded font-body">{clientOrdersCount} orders</span>
                             </div>
                           </div>
                         );
@@ -616,44 +616,44 @@ const handleSaveProduct = async (productData: any) => {
                   <>
                     <div>
                     <button onClick={() => setSelectedClientDetails(null)} className="flex items-center gap-2 text-xs font-body text-muted-foreground hover:text-foreground mb-6">
-                      <ArrowLeft size={14}/> عودة لقائمة العملاء
+                      <ArrowLeft size={14}/> Back to Client List
                     </button>
                     
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 border-b border-border pb-6">
                       <div>
                         <h2 className="font-display text-3xl text-foreground">{selectedClientDetails.companyName}</h2>
-                        <p className="text-sm font-body text-muted-foreground mt-1">المالك: {selectedClientDetails.ownerName} | هاتف: {selectedClientDetails.phone}</p>
+                        <p className="text-sm font-body text-muted-foreground mt-1">Owner: {selectedClientDetails.ownerName} | Phone: {selectedClientDetails.phone}</p>
                     <div className="mt-3 flex gap-4 text-xs font-body bg-primary/5 p-2.5 rounded-xl border border-primary/20 w-fit">
-                      <p><span className="text-muted-foreground">اسم المستخدم:</span> <span className="font-bold tracking-wider" dir="ltr">{selectedClientDetails.username}</span></p>
+                      <p><span className="text-muted-foreground">Username:</span> <span className="font-bold tracking-wider" dir="ltr">{selectedClientDetails.username}</span></p>
                       <div className="w-px h-4 bg-primary/20"></div>
-                      <p><span className="text-muted-foreground">كلمة المرور:</span> <span className="font-bold tracking-wider" dir="ltr">{selectedClientDetails.password}</span></p>
+                      <p><span className="text-muted-foreground">Password:</span> <span className="font-bold tracking-wider" dir="ltr">{selectedClientDetails.password}</span></p>
                     </div>
                       </div>
                       <div className="flex flex-col items-end gap-3">
                         <div className="flex items-center gap-4 bg-background px-4 py-2 rounded-2xl border border-border shadow-soft">
                            <div className="text-center">
-                             <p className="text-[10px] text-muted-foreground uppercase">البضاعة المستلمة</p>
-                             <p className="font-bold text-sm">${selectedClientDetails.totalDebt.toLocaleString()}</p>
+                             <p className="text-[10px] text-muted-foreground uppercase">Total Billed</p>
+                             <p className="font-bold text-sm">EGP {selectedClientDetails.totalDebt.toLocaleString()}</p>
                            </div>
                            <div className="w-px h-6 bg-border"></div>
                            <div className="text-center">
-                             <p className="text-[10px] text-muted-foreground uppercase">إجمالي المدفوع</p>
-                             <p className="font-bold text-sm text-green-600">${selectedClientDetails.paidAmount.toLocaleString()}</p>
+                             <p className="text-[10px] text-muted-foreground uppercase">Total Paid</p>
+                             <p className="font-bold text-sm text-green-600">EGP {selectedClientDetails.paidAmount.toLocaleString()}</p>
                            </div>
                            <div className="w-px h-6 bg-border"></div>
                            <div className="text-center">
-                             <p className="text-[10px] text-muted-foreground uppercase">{(selectedClientDetails.totalDebt - selectedClientDetails.paidAmount) < 0 ? 'رصيد دائن' : 'المديونية'}</p>
-                             <p className={`font-bold text-sm ${(selectedClientDetails.totalDebt - selectedClientDetails.paidAmount) > 0 ? 'text-destructive' : 'text-green-600'}`}>${Math.abs(selectedClientDetails.totalDebt - selectedClientDetails.paidAmount).toLocaleString()}</p>
+                             <p className="text-[10px] text-muted-foreground uppercase">{(selectedClientDetails.totalDebt - selectedClientDetails.paidAmount) < 0 ? 'Credit Balance' : 'Debt'}</p>
+                             <p className={`font-bold text-sm ${(selectedClientDetails.totalDebt - selectedClientDetails.paidAmount) > 0 ? 'text-destructive' : 'text-green-600'}`}>EGP {Math.abs(selectedClientDetails.totalDebt - selectedClientDetails.paidAmount).toLocaleString()}</p>
                            </div>
                         </div>
                         <Button onClick={() => recordClientPayment(selectedClientDetails._id)} className="rounded-full gap-2 text-xs h-9">
-                          <Wallet size={14}/> تسجيل دفعة مستلمة
+                          <Wallet size={14}/> Record Payment
                         </Button>
                       </div>
                     </div>
                     
                     <div className="mb-8">
-                      <h3 className="font-display text-xl mb-4">سجل الطلبات (Order History)</h3>
+                      <h3 className="font-display text-xl mb-4">Order History</h3>
                       <div className="space-y-4">
                         {wholesaleOrders.filter(o => o.clientId === selectedClientDetails._id).map(order => (
                           <div key={order._id} className="border border-border rounded-2xl p-4 bg-background flex justify-between items-center">
@@ -661,7 +661,7 @@ const handleSaveProduct = async (productData: any) => {
                               <div 
                                 className="flex -space-x-3 cursor-pointer group relative"
                                 onClick={() => setViewingImages(order.productImages?.length > 0 ? order.productImages : (order.productImage ? [order.productImage] : []))}
-                                title="اضغط لعرض وتحميل الصور"
+                                title="Click to view and download images"
                               >
                                 {(order.productImages?.length > 0 ? order.productImages : (order.productImage ? [order.productImage] : [])).map((img: string, i: number) => (
                                   <img key={i} src={img} className="w-16 h-20 object-cover rounded-xl border-2 border-background shadow-soft group-hover:border-primary transition-colors" alt="img"/>
@@ -679,34 +679,34 @@ const handleSaveProduct = async (productData: any) => {
                                 </div>
                                 <div className="bg-secondary/20 p-3 rounded-xl border border-border/50 space-y-2 max-w-md w-full">
                                   {order.details && (
-                                    <p className="text-xs text-muted-foreground"><span className="font-bold text-foreground">تفاصيل/ملاحظات:</span> {order.details}</p>
+                                    <p className="text-xs text-muted-foreground"><span className="font-bold text-foreground">Details/Notes:</span> {order.details}</p>
                                   )}
                                   {order.colors && order.colors.length > 0 && (
                                     <div className="flex flex-wrap gap-1 items-center">
-                                      <span className="text-[10px] font-bold text-foreground">الألوان:</span>
+                                      <span className="text-[10px] font-bold text-foreground">Colors:</span>
                                       {order.colors.map((c: string, i: number) => <span key={i} className="bg-background border border-border px-2 py-0.5 rounded-md text-[10px]">{c}</span>)}
                                     </div>
                                   )}
                                   <div className="flex flex-wrap gap-1 items-center mt-1">
-                                    <span className="text-[10px] font-bold text-foreground">المقاسات:</span>
+                                    <span className="text-[10px] font-bold text-foreground">Sizes:</span>
                                     {Object.entries(order.quantityPerSize).map(([s, q]) => Number(q) > 0 && (
                                       <span key={s} className="bg-primary/10 text-primary px-2 py-0.5 rounded-md text-[10px] font-display">{s}: {q as number}</span>
                                     ))}
-                                    <span className="bg-background border border-border px-2 py-0.5 rounded-md text-[10px] font-bold mr-auto">إجمالي: {order.totalQuantity} قطع</span>
+                                    <span className="bg-background border border-border px-2 py-0.5 rounded-md text-[10px] font-bold mr-auto">Total: {order.totalQuantity} pieces</span>
                                   </div>
                                 </div>
                                 
                                 <div className="mt-3">
                                   {!order.pricePerPiece || order.pricePerPiece === 0 ? (
                                     <div className="flex gap-2">
-                                      <input type="number" id={`price-${order._id}`} placeholder="سعر القطعة ($)" className="w-28 h-8 px-2 text-xs border border-border rounded-lg bg-background" />
+                                      <input type="number" id={`price-${order._id}`} placeholder="Price per piece (EGP)" className="w-28 h-8 px-2 text-xs border border-border rounded-lg bg-background" />
                                       <Button size="sm" className="h-8 text-[10px] rounded-lg" onClick={() => {
                                         const val = (document.getElementById(`price-${order._id}`) as HTMLInputElement).value;
                                         if(val && Number(val) > 0) updateWholesaleOrder(order._id, { pricePerPiece: Number(val) });
-                                      }}>تسعير</Button>
+                                      }}>Set Price</Button>
                                     </div>
                                   ) : (
-                                    <p className="text-xs text-foreground mt-1">السعر: <span className="text-primary font-bold">${order.pricePerPiece}</span>/قطعة | الإجمالي: <span className="text-primary font-bold">${order.totalPrice}</span></p>
+                                    <p className="text-xs text-foreground mt-1">Price: <span className="text-primary font-bold">EGP {order.pricePerPiece}</span>/piece | Total: <span className="text-primary font-bold">EGP {order.totalPrice}</span></p>
                                   )}
                                 </div>
                               </div>
@@ -717,11 +717,11 @@ const handleSaveProduct = async (productData: any) => {
                               disabled={!order.pricePerPiece || order.pricePerPiece === 0}
                               className="text-xs font-body px-3 py-2 rounded-xl border border-input bg-background focus:outline-none disabled:opacity-50"
                             >
-                              <option value="في انتظار التسعير">في انتظار التسعير</option>
-                              <option value="قيد الانتظار">قيد الانتظار</option>
-                              <option value="جاري القص">جاري القص</option>
-                              <option value="جاري الخياطة">جاري الخياطة</option>
-                              <option value="تم التسليم">تم التسليم (يضيف للمديونية)</option>
+                              <option value="في انتظار التسعير">Pending Pricing</option>
+                              <option value="قيد الانتظار">Pending</option>
+                              <option value="جاري القص">Cutting</option>
+                              <option value="جاري الخياطة">Sewing</option>
+                              <option value="تم التسليم">Delivered (Adds to Debt)</option>
                             </select>
                           </div>
                         ))}
@@ -733,28 +733,28 @@ const handleSaveProduct = async (productData: any) => {
                     {editWholesaleOrder && (
                       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-foreground/30 backdrop-blur-sm" onClick={() => setEditWholesaleOrder(null)}>
                         <div className="bg-card rounded-3xl p-6 w-full max-w-sm border border-border shadow-elevated" onClick={e => e.stopPropagation()}>
-                          <h3 className="font-display text-xl mb-4">تعديل تفاصيل الطلب</h3>
+                          <h3 className="font-display text-xl mb-4">Edit Order Details</h3>
                           <div className="space-y-4">
                             <div>
-                              <label className="text-xs text-muted-foreground">اسم الموديل</label>
+                              <label className="text-xs text-muted-foreground">Model Name</label>
                               <Input value={wOrderForm.name} onChange={e => setWOrderForm({...wOrderForm, name: e.target.value})} className="h-10 mt-1 rounded-xl" />
                             </div>
                             <div className="grid grid-cols-2 gap-3">
                               <div>
-                                <label className="text-xs text-muted-foreground">سعر القطعة ($)</label>
+                                <label className="text-xs text-muted-foreground">Price per piece (EGP)</label>
                                 <Input type="number" min="0" value={wOrderForm.price} onChange={e => setWOrderForm({...wOrderForm, price: Number(e.target.value)})} className="h-10 mt-1 rounded-xl" />
                               </div>
                               <div>
-                                <label className="text-xs text-muted-foreground">الألوان (بينها فاصلة)</label>
+                                <label className="text-xs text-muted-foreground">Colors (comma separated)</label>
                                 <Input value={wOrderForm.colors} onChange={e => setWOrderForm({...wOrderForm, colors: e.target.value})} className="h-10 mt-1 rounded-xl" />
                               </div>
                             </div>
                             <div>
-                              <label className="text-xs text-muted-foreground">تفاصيل/ملاحظات</label>
+                              <label className="text-xs text-muted-foreground">Details/Notes</label>
                               <textarea value={wOrderForm.details} onChange={e => setWOrderForm({...wOrderForm, details: e.target.value})} className="w-full p-3 mt-1 text-sm border border-input rounded-xl bg-background resize-none h-20 focus:outline-none focus:ring-2 focus:ring-primary" />
                             </div>
                             <div>
-                              <label className="text-xs text-muted-foreground">الكميات المعدلة</label>
+                              <label className="text-xs text-muted-foreground">Adjusted Quantities</label>
                               <div className="grid grid-cols-5 gap-2 mt-1">
                                 {['S', 'M', 'L', 'XL', 'XXL'].map(size => (
                                   <div key={size} className="text-center">
@@ -765,7 +765,7 @@ const handleSaveProduct = async (productData: any) => {
                               </div>
                             </div>
                             <div className="flex gap-2 pt-2">
-                              <Button variant="outline" onClick={() => setEditWholesaleOrder(null)} className="flex-1 rounded-full text-xs h-10">إلغاء</Button>
+                              <Button variant="outline" onClick={() => setEditWholesaleOrder(null)} className="flex-1 rounded-full text-xs h-10">Cancel</Button>
                               <Button onClick={() => updateWholesaleOrder(editWholesaleOrder._id, { 
                                 productName: wOrderForm.name, 
                                 details: wOrderForm.details,
@@ -773,7 +773,7 @@ const handleSaveProduct = async (productData: any) => {
                                 pricePerPiece: wOrderForm.price,
                                 quantityPerSize: wOrderForm.sizes, 
                                 totalQuantity: Object.values(wOrderForm.sizes).reduce((a:any,b:any)=>a+b, 0) 
-                              })} className="flex-1 rounded-full text-xs h-10 bg-green-600 hover:bg-green-700 text-white">حفظ التعديلات</Button>
+                              })} className="flex-1 rounded-full text-xs h-10 bg-green-600 hover:bg-green-700 text-white">Save Changes</Button>
                             </div>
                           </div>
                         </div>
@@ -802,7 +802,7 @@ const handleSaveProduct = async (productData: any) => {
                                 }}
                                 className="absolute bottom-4 right-4 bg-primary text-primary-foreground px-4 py-2 rounded-xl text-sm font-body shadow-soft opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-2"
                               >
-                                <Download size={16} /> تحميل الصورة
+                                <Download size={16} /> Download Image
                               </button>
                             </div>
                           ))}
@@ -821,17 +821,17 @@ const handleSaveProduct = async (productData: any) => {
                 <div className="flex items-center justify-between mb-6">
                   <div>
                     <h2 className="font-display text-xl text-foreground">Team & Payroll</h2>
-                    <p className="text-xs font-body text-muted-foreground mt-1">Total Payroll: ${totalWorkersSalary.toLocaleString()}</p>
+                    <p className="text-xs font-body text-muted-foreground mt-1">Total Payroll: EGP {totalWorkersSalary.toLocaleString()}</p>
                   </div>
                   <Button size="sm" className="rounded-full font-body text-xs gap-2" onClick={() => { setEditingWorker(null); setShowWorkerModal(true); }}>
-                    <Plus size={14} /> إضافة عامل
+                    <Plus size={14} /> Add Worker
                   </Button>
                 </div>
 
                 {workers.length === 0 ? (
                   <div className="text-center py-12">
                     <Users size={48} className="mx-auto text-muted-foreground/30 mb-4" />
-                    <p className="text-muted-foreground font-body">لا يوجد عمال مسجلين حتى الآن.</p>
+                    <p className="text-muted-foreground font-body">No workers registered yet.</p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -840,10 +840,10 @@ const handleSaveProduct = async (productData: any) => {
                       return (
                         <div key={worker._id} className="border border-border rounded-3xl p-5 bg-secondary/10 relative group">
                           <div className="absolute top-4 right-4 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button onClick={() => { setEditingWorker(worker); setShowWorkerModal(true); }} className="p-2 bg-background border border-border rounded-full text-muted-foreground hover:text-primary shadow-soft" title="تعديل">
+                            <button onClick={() => { setEditingWorker(worker); setShowWorkerModal(true); }} className="p-2 bg-background border border-border rounded-full text-muted-foreground hover:text-primary shadow-soft" title="Edit">
                               <Edit size={14} />
                             </button>
-                            <button onClick={() => handleDeleteWorker(worker._id)} className="p-2 bg-background border border-border rounded-full text-muted-foreground hover:text-destructive shadow-soft" title="حذف">
+                            <button onClick={() => handleDeleteWorker(worker._id)} className="p-2 bg-background border border-border rounded-full text-muted-foreground hover:text-destructive shadow-soft" title="Delete">
                               <Trash2 size={14} />
                             </button>
                           </div>
@@ -860,16 +860,16 @@ const handleSaveProduct = async (productData: any) => {
 
                           <div className="grid grid-cols-3 gap-2 mb-4 bg-background p-3 rounded-2xl border border-border/50 text-center">
                             <div>
-                              <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">الراتب</p>
-                              <p className="font-display text-sm">${worker.salary}</p>
+                              <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Salary</p>
+                              <p className="font-display text-sm">EGP {worker.salary}</p>
                             </div>
                             <div className="border-x border-border/50">
-                              <p className="text-[10px] uppercase tracking-wider text-destructive mb-1">سحوبات</p>
-                              <p className="font-display text-sm text-destructive">-${worker.deductions}</p>
+                              <p className="text-[10px] uppercase tracking-wider text-destructive mb-1">Deductions</p>
+                              <p className="font-display text-sm text-destructive">-EGP {worker.deductions}</p>
                             </div>
                             <div>
-                              <p className="text-[10px] uppercase tracking-wider text-green-600 mb-1">الصافي</p>
-                              <p className="font-display text-sm text-green-600 font-bold">${netSalary}</p>
+                              <p className="text-[10px] uppercase tracking-wider text-green-600 mb-1">Net</p>
+                              <p className="font-display text-sm text-green-600 font-bold">EGP {netSalary}</p>
                             </div>
                           </div>
 
@@ -877,7 +877,7 @@ const handleSaveProduct = async (productData: any) => {
                             <div className="flex items-center gap-3">
                               <div className="flex items-center gap-2">
                                 <CheckCircle2 size={16} className="text-green-500" />
-                                <span className="text-sm font-body font-bold">{worker.presentDays || 0} <span className="text-[10px] text-muted-foreground font-normal">حضور</span></span>
+                                <span className="text-sm font-body font-bold">{worker.presentDays || 0} <span className="text-[10px] text-muted-foreground font-normal">Present</span></span>
                               </div>
                               <div className="flex flex-col gap-1">
                                 <button onClick={() => updateWorkerStat(worker, 'presentDays', 1)} className="w-6 h-4 bg-secondary hover:bg-green-100 text-green-700 flex items-center justify-center rounded text-xs transition-colors">+</button>
@@ -891,7 +891,7 @@ const handleSaveProduct = async (productData: any) => {
                                 <button onClick={() => updateWorkerStat(worker, 'absentDays', -1)} className="w-6 h-4 bg-secondary hover:bg-red-100 text-red-700 flex items-center justify-center rounded text-xs transition-colors">-</button>
                               </div>
                               <div className="flex items-center gap-2">
-                                <span className="text-sm font-body font-bold">{worker.absentDays || 0} <span className="text-[10px] text-muted-foreground font-normal">غياب</span></span>
+                                <span className="text-sm font-body font-bold">{worker.absentDays || 0} <span className="text-[10px] text-muted-foreground font-normal">Absent</span></span>
                                 <XCircle size={16} className="text-destructive" />
                               </div>
                             </div>
@@ -899,11 +899,11 @@ const handleSaveProduct = async (productData: any) => {
 
                           <div className="flex items-end justify-between mt-2">
                             <div className="flex-1 pr-4">
-                              <p className="text-[11px] text-muted-foreground flex items-center gap-1 mb-1"><FileText size={12}/> ملاحظات:</p>
-                              <p className="text-xs font-body text-foreground line-clamp-2">{worker.notes || 'لا يوجد ملاحظات'}</p>
+                              <p className="text-[11px] text-muted-foreground flex items-center gap-1 mb-1"><FileText size={12}/> Notes:</p>
+                              <p className="text-xs font-body text-foreground line-clamp-2">{worker.notes || 'No notes'}</p>
                             </div>
                             <Button size="sm" variant="outline" onClick={() => resetWorkerMonth(worker)} className="shrink-0 h-8 rounded-full text-[10px] gap-1 hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-colors">
-                              <RotateCcw size={12} /> تصفير الشهر
+                              <RotateCcw size={12} /> Reset Month
                             </Button>
                           </div>
                         </div>
@@ -919,11 +919,11 @@ const handleSaveProduct = async (productData: any) => {
               <div className="bg-card rounded-3xl border border-border p-4 md:p-6 shadow-card">
                 <div className="flex items-center justify-between mb-8 border-b border-border pb-6">
                   <div>
-                    <h2 className="font-display text-xl text-foreground flex items-center gap-2"><Truck size={20}/> أسعار التوصيل للمحافظات</h2>
-                    <p className="text-xs font-body text-muted-foreground mt-1">حددي تكلفة الشحن لكل محافظة ليتم إضافتها لتوتال طلب العميل تلقائياً.</p>
+                    <h2 className="font-display text-xl text-foreground flex items-center gap-2"><Truck size={20}/> Shipping Rates for Governorates</h2>
+                    <p className="text-xs font-body text-muted-foreground mt-1">Set the shipping cost for each governorate to be automatically added to the customer's order total.</p>
                   </div>
                   <Button onClick={saveShippingRates} className="rounded-full gap-2">
-                    <Check size={16} /> حفظ التعديلات
+                    <Check size={16} /> Save Changes
                   </Button>
                 </div>
                 
@@ -932,7 +932,7 @@ const handleSaveProduct = async (productData: any) => {
                     <div key={gov} className="flex items-center justify-between p-3 rounded-2xl border border-border/50 bg-secondary/20">
                       <span className="text-sm font-bold text-foreground w-28 truncate">{gov}</span>
                       <div className="flex items-center gap-2">
-                        <span className="text-muted-foreground text-sm">$</span>
+                        <span className="text-muted-foreground text-sm">EGP</span>
                         <Input 
                           type="number" 
                           min="0"

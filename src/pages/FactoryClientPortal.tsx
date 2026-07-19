@@ -48,8 +48,8 @@ const FactoryClientPortal = () => {
             { label: "Total Produced", value: totalPieces, icon: <Package size={18} /> },
             { label: "Total Sold", value: totalSold, icon: <TrendingUp size={18} /> },
             { label: "Remaining", value: totalRemaining, icon: <Package size={18} /> },
-            { label: "Total Paid", value: `$${totalPaid.toLocaleString()}`, icon: <DollarSign size={18} /> },
-            { label: "Balance Due", value: `$${totalBalance.toLocaleString()}`, icon: <DollarSign size={18} /> },
+            { label: "Total Paid", value: `EGP ${totalPaid.toLocaleString()}`, icon: <DollarSign size={18} /> },
+            { label: "Balance Due", value: `EGP ${totalBalance.toLocaleString()}`, icon: <DollarSign size={18} /> },
           ].map((stat, i) => (
             <motion.div key={stat.label} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} className="bg-card rounded-2xl border border-border p-4 shadow-card">
               <div className="p-2 rounded-xl bg-primary/10 text-primary mb-2 w-fit">{stat.icon}</div>
@@ -85,11 +85,11 @@ const FactoryClientPortal = () => {
                   </div>
                   <div>
                     <p className="text-muted-foreground">Paid</p>
-                    <p className="text-green-600">${piece.paidAmount.toLocaleString()}</p>
+                    <p className="text-green-600">EGP {piece.paidAmount.toLocaleString()}</p>
                   </div>
                   <div>
                     <p className="text-muted-foreground">Remaining</p>
-                    <p className={piece.remainingAmount > 0 ? "text-destructive" : "text-green-600"}>${piece.remainingAmount.toLocaleString()}</p>
+                    <p className={piece.remainingAmount > 0 ? "text-destructive" : "text-green-600"}>EGP {piece.remainingAmount.toLocaleString()}</p>
                   </div>
                 </div>
               </div>
