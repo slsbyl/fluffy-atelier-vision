@@ -332,7 +332,7 @@ const ProductDetail = () => {
               </div>
             )}
 
-            <p className="font-display text-2xl text-foreground mb-6">EGP {product.price}</p>
+            <p className="font-display text-2xl text-foreground mb-6">{product.price} EGP</p>
             <p className="font-body text-sm text-muted-foreground leading-relaxed mb-8">{product.description}</p>
 
             <div className="space-y-4 mb-8">

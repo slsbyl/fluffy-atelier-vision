@@ -191,7 +191,7 @@ const VirtualTryOn = () => {
                           <img src={selectedProduct.image} alt={selectedProduct.name} className="w-12 h-12 rounded-xl object-cover" />
                           <div className="flex-1">
                             <p className="font-display text-sm text-foreground">{selectedProduct.name}</p>
-                            <p className="text-xs font-body text-muted-foreground">EGP {selectedProduct.price}</p>
+                            <p className="text-xs font-body text-muted-foreground">{selectedProduct.price} EGP</p>
                           </div>
                           <Button size="sm" className="rounded-full text-xs font-body">
                             Add to Cart

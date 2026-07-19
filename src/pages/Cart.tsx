@@ -122,7 +122,7 @@ const Cart = () => {
 
         toast({
           title: "تم تأكيد الطلب بنجاح",
-          description: `Thank you ${customerName}! Your order for EGP ${finalTotal} has been confirmed. It will be delivered soon.`,
+          description: `Thank you ${customerName}! Your order for ${finalTotal} EGP has been confirmed. It will be delivered soon.`,
         });
       } else {
         toast({
@@ -294,7 +294,7 @@ const Cart = () => {
                               </button>
                             </div>
                             <p className="font-display text-base text-foreground">
-                              EGP {item.price * item.quantity}
+                              {item.price * item.quantity} EGP
                             </p>
                           </div>
                         </div>
@@ -311,7 +311,7 @@ const Cart = () => {
                   <div className="mt-8 pt-6 border-t border-border">
                     <div className="flex justify-between items-center mb-6">
                       <span className="font-display text-lg text-foreground">Total</span>
-                      <span className="font-display text-2xl text-foreground">EGP {total}</span>
+                      <span className="font-display text-2xl text-foreground">{total} EGP</span>
                     </div>
                     <Button
                       size="lg"
@@ -408,7 +408,7 @@ const Cart = () => {
                   >
                     <option value="">Select Governorate...</option>
                     {EGYPT_GOVERNORATES.map(gov => (
-                      <option key={gov} value={gov}>{gov} - EGP {shippingRates[gov] || 0}</option>
+                      <option key={gov} value={gov}>{gov} - {shippingRates[gov] || 0} EGP</option>
                     ))}
                   </select>
                 </div>
@@ -440,22 +440,22 @@ const Cart = () => {
                         )}
                         x{item.quantity}
                       </span>
-                      <span>EGP {item.price * item.quantity}</span>
+                      <span>{item.price * item.quantity} EGP</span>
                     </div>
                   ))}
                   <div className="border-t border-border mt-2 pt-2 flex justify-between font-display text-foreground text-sm">
                     <span>Subtotal</span>
-                    <span>EGP {total}</span>
+                    <span>{total} EGP</span>
                   </div>
                   {governorate && (
                     <div className="flex justify-between font-display text-foreground text-sm mt-1">
                       <span>Shipping ({governorate})</span>
-                      <span>EGP {shippingFee}</span>
+                      <span>{shippingFee} EGP</span>
                     </div>
                   )}
                   <div className="border-t border-border mt-2 pt-2 flex justify-between font-display text-foreground text-lg">
                     <span>Grand Total</span>
-                    <span className="text-primary">EGP {finalTotal}</span>
+                    <span className="text-primary">{finalTotal} EGP</span>
                   </div>
                 </div>
                 <div className="flex gap-3 pt-2">

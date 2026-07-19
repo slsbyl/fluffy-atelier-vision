@@ -151,17 +151,17 @@ const FactoryDashboard = () => {
             <div className="flex items-center gap-4 bg-secondary/30 px-5 py-3 rounded-2xl border border-border">
               <div className="text-center">
                 <p className="text-[10px] text-muted-foreground font-bold mb-1">Total Goods</p>
-                <p className="font-display text-base">EGP {client.totalDebt.toLocaleString()}</p>
+                <p className="font-display text-base">{client.totalDebt.toLocaleString()} EGP</p>
               </div>
               <div className="w-px h-8 bg-border"></div>
               <div className="text-center">
                 <p className="text-[10px] text-muted-foreground font-bold mb-1">Paid</p>
-                <p className="font-display text-base text-green-600">EGP {client.paidAmount.toLocaleString()}</p>
+                <p className="font-display text-base text-green-600">{client.paidAmount.toLocaleString()} EGP</p>
               </div>
               <div className="w-px h-8 bg-border"></div>
               <div className="text-center">
                 <p className="text-[10px] text-muted-foreground font-bold mb-1">{remainingDebt < 0 ? 'Your Credit Balance' : 'Debt'}</p>
-                <p className={`font-display text-base ${remainingDebt > 0 ? 'text-destructive' : 'text-green-600'}`}>EGP {Math.abs(remainingDebt).toLocaleString()}</p>
+                <p className={`font-display text-base ${remainingDebt > 0 ? 'text-destructive' : 'text-green-600'}`}>{Math.abs(remainingDebt).toLocaleString()} EGP</p>
               </div>
             </div>
             <Button variant="outline" onClick={handleLogout} className="rounded-full gap-2">
@@ -266,8 +266,8 @@ const FactoryDashboard = () => {
                       </div>
                       {order.pricePerPiece && order.pricePerPiece > 0 ? (
                         <div className="text-right">
-                          <p className="font-display text-primary text-lg">EGP {order.totalPrice}</p>
-                          <p className="text-[10px] text-muted-foreground font-body">EGP {order.pricePerPiece} per piece</p>
+                          <p className="font-display text-primary text-lg">{order.totalPrice} EGP</p>
+                          <p className="text-[10px] text-muted-foreground font-body">{order.pricePerPiece} EGP per piece</p>
                         </div>
                       ) : (
                         <span className="text-[10px] text-yellow-600 bg-yellow-50 px-2 py-1 rounded-md border border-yellow-200">Awaiting Pricing</span>

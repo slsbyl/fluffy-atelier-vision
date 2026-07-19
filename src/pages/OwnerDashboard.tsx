@@ -380,10 +380,10 @@ const handleSaveProduct = async (productData: any) => {
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-8">
           <StatCard label="Total Orders" value={String(orders.length)} icon={<ShoppingBag size={18} />} trend="+8%" />
-          <StatCard label="Revenue" value={`EGP ${totalRevenue.toLocaleString()}`} icon={<DollarSign size={18} />} trend="+12%" />
+          <StatCard label="Revenue" value={`${totalRevenue.toLocaleString()} EGP`} icon={<DollarSign size={18} />} trend="+12%" />
           <StatCard label="Products" value={String(managedProducts.length)} icon={<Package size={18} />} />
           <StatCard label="Workers" value={String(workers.length)} icon={<Users size={18} />} />
-          <StatCard label="Factory Debts" value={`EGP ${totalFactoryDebt.toLocaleString()}`} icon={<Wallet size={18} />} accent="bg-destructive/10 text-destructive" />
+          <StatCard label="Factory Debts" value={`${totalFactoryDebt.toLocaleString()} EGP`} icon={<Wallet size={18} />} accent="bg-destructive/10 text-destructive" />
         </div>
 
         <div className="flex gap-2 mb-8 overflow-x-auto pb-2 scrollbar-hide">
@@ -433,7 +433,7 @@ const handleSaveProduct = async (productData: any) => {
                               </div>
                             </td>
                             <td className="py-3 px-2 text-sm font-body text-muted-foreground">{product.category}</td>
-                            <td className="py-3 px-2 text-sm font-body text-foreground">EGP {product.price}</td>
+                            <td className="py-3 px-2 text-sm font-body text-foreground">{product.price} EGP</td>
                             <td className="py-3 px-2">
                               <div className="flex items-center gap-2">
                                 <button
@@ -499,7 +499,7 @@ const handleSaveProduct = async (productData: any) => {
                             }`}>
                               {order.status || 'Pending'}
                             </span>
-                            <p className="font-display text-xl text-primary mt-2">EGP {order.totalAmount}</p>
+                            <p className="font-display text-xl text-primary mt-2">{order.totalAmount} EGP</p>
                           </div>
                         </div>
 
@@ -514,7 +514,7 @@ const handleSaveProduct = async (productData: any) => {
                                 <>
                                   <div className="border-t border-border/50 my-2"></div>
                                   <p className="text-sm font-body"><span className="text-muted-foreground inline-block w-20">Gov/City:</span> <span className="font-medium text-foreground">{order.governorate}</span></p>
-                                  <p className="text-sm font-body"><span className="text-muted-foreground inline-block w-20">Shipping:</span> <span className="font-medium text-foreground">EGP {order.shippingFee}</span></p>
+                                  <p className="text-sm font-body"><span className="text-muted-foreground inline-block w-20">Shipping:</span> <span className="font-medium text-foreground">{order.shippingFee} EGP</span></p>
                                 </>
                               )}
                             </div>
@@ -543,7 +543,7 @@ const handleSaveProduct = async (productData: any) => {
                                   </div>
                                   <div className="text-right">
                                     <p className="text-xs font-body text-muted-foreground mb-1">Qty: <span className="font-medium text-foreground text-sm">{item.quantity}</span></p>
-                                    <p className="text-sm text-primary font-display">EGP {item.price * item.quantity}</p>
+                                    <p className="text-sm text-primary font-display">{item.price * item.quantity} EGP</p>
                                   </div>
                                 </div>
                               ))}
@@ -603,7 +603,7 @@ const handleSaveProduct = async (productData: any) => {
                             <div className="flex justify-between items-end border-t border-border/50 pt-3">
                               <div>
                                 <p className="text-[10px] uppercase text-muted-foreground">{remainingDebt < 0 ? 'Client Credit' : 'Debt Due'}</p>
-                                <p className={`font-display text-lg ${remainingDebt > 0 ? 'text-destructive' : 'text-green-600'}`}>EGP {Math.abs(remainingDebt).toLocaleString()}</p>
+                                <p className={`font-display text-lg ${remainingDebt > 0 ? 'text-destructive' : 'text-green-600'}`}>{Math.abs(remainingDebt).toLocaleString()} EGP</p>
                               </div>
                               <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded font-body">{clientOrdersCount} orders</span>
                             </div>
@@ -633,17 +633,17 @@ const handleSaveProduct = async (productData: any) => {
                         <div className="flex items-center gap-4 bg-background px-4 py-2 rounded-2xl border border-border shadow-soft">
                            <div className="text-center">
                              <p className="text-[10px] text-muted-foreground uppercase">Total Billed</p>
-                             <p className="font-bold text-sm">EGP {selectedClientDetails.totalDebt.toLocaleString()}</p>
+                             <p className="font-bold text-sm">{selectedClientDetails.totalDebt.toLocaleString()} EGP</p>
                            </div>
                            <div className="w-px h-6 bg-border"></div>
                            <div className="text-center">
                              <p className="text-[10px] text-muted-foreground uppercase">Total Paid</p>
-                             <p className="font-bold text-sm text-green-600">EGP {selectedClientDetails.paidAmount.toLocaleString()}</p>
+                             <p className="font-bold text-sm text-green-600">{selectedClientDetails.paidAmount.toLocaleString()} EGP</p>
                            </div>
                            <div className="w-px h-6 bg-border"></div>
                            <div className="text-center">
                              <p className="text-[10px] text-muted-foreground uppercase">{(selectedClientDetails.totalDebt - selectedClientDetails.paidAmount) < 0 ? 'Credit Balance' : 'Debt'}</p>
-                             <p className={`font-bold text-sm ${(selectedClientDetails.totalDebt - selectedClientDetails.paidAmount) > 0 ? 'text-destructive' : 'text-green-600'}`}>EGP {Math.abs(selectedClientDetails.totalDebt - selectedClientDetails.paidAmount).toLocaleString()}</p>
+                             <p className={`font-bold text-sm ${(selectedClientDetails.totalDebt - selectedClientDetails.paidAmount) > 0 ? 'text-destructive' : 'text-green-600'}`}>{Math.abs(selectedClientDetails.totalDebt - selectedClientDetails.paidAmount).toLocaleString()} EGP</p>
                            </div>
                         </div>
                         <Button onClick={() => recordClientPayment(selectedClientDetails._id)} className="rounded-full gap-2 text-xs h-9">
@@ -699,14 +699,14 @@ const handleSaveProduct = async (productData: any) => {
                                 <div className="mt-3">
                                   {!order.pricePerPiece || order.pricePerPiece === 0 ? (
                                     <div className="flex gap-2">
-                                      <input type="number" id={`price-${order._id}`} placeholder="Price per piece (EGP)" className="w-28 h-8 px-2 text-xs border border-border rounded-lg bg-background" />
+                                      <input type="number" id={`price-${order._id}`} placeholder="Price per piece (EGP)" className="w-32 h-8 px-2 text-xs border border-border rounded-lg bg-background" />
                                       <Button size="sm" className="h-8 text-[10px] rounded-lg" onClick={() => {
                                         const val = (document.getElementById(`price-${order._id}`) as HTMLInputElement).value;
                                         if(val && Number(val) > 0) updateWholesaleOrder(order._id, { pricePerPiece: Number(val) });
                                       }}>Set Price</Button>
                                     </div>
                                   ) : (
-                                    <p className="text-xs text-foreground mt-1">Price: <span className="text-primary font-bold">EGP {order.pricePerPiece}</span>/piece | Total: <span className="text-primary font-bold">EGP {order.totalPrice}</span></p>
+                                    <p className="text-xs text-foreground mt-1">Price: <span className="text-primary font-bold">{order.pricePerPiece} EGP</span>/piece | Total: <span className="text-primary font-bold">{order.totalPrice} EGP</span></p>
                                   )}
                                 </div>
                               </div>
@@ -821,7 +821,7 @@ const handleSaveProduct = async (productData: any) => {
                 <div className="flex items-center justify-between mb-6">
                   <div>
                     <h2 className="font-display text-xl text-foreground">Team & Payroll</h2>
-                    <p className="text-xs font-body text-muted-foreground mt-1">Total Payroll: EGP {totalWorkersSalary.toLocaleString()}</p>
+                    <p className="text-xs font-body text-muted-foreground mt-1">Total Payroll: {totalWorkersSalary.toLocaleString()} EGP</p>
                   </div>
                   <Button size="sm" className="rounded-full font-body text-xs gap-2" onClick={() => { setEditingWorker(null); setShowWorkerModal(true); }}>
                     <Plus size={14} /> Add Worker
@@ -861,15 +861,15 @@ const handleSaveProduct = async (productData: any) => {
                           <div className="grid grid-cols-3 gap-2 mb-4 bg-background p-3 rounded-2xl border border-border/50 text-center">
                             <div>
                               <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Salary</p>
-                              <p className="font-display text-sm">EGP {worker.salary}</p>
+                              <p className="font-display text-sm">{worker.salary} EGP</p>
                             </div>
                             <div className="border-x border-border/50">
                               <p className="text-[10px] uppercase tracking-wider text-destructive mb-1">Deductions</p>
-                              <p className="font-display text-sm text-destructive">-EGP {worker.deductions}</p>
+                              <p className="font-display text-sm text-destructive">-{worker.deductions} EGP</p>
                             </div>
                             <div>
                               <p className="text-[10px] uppercase tracking-wider text-green-600 mb-1">Net</p>
-                              <p className="font-display text-sm text-green-600 font-bold">EGP {netSalary}</p>
+                              <p className="font-display text-sm text-green-600 font-bold">{netSalary} EGP</p>
                             </div>
                           </div>
 
@@ -932,7 +932,6 @@ const handleSaveProduct = async (productData: any) => {
                     <div key={gov} className="flex items-center justify-between p-3 rounded-2xl border border-border/50 bg-secondary/20">
                       <span className="text-sm font-bold text-foreground w-28 truncate">{gov}</span>
                       <div className="flex items-center gap-2">
-                        <span className="text-muted-foreground text-sm">EGP</span>
                         <Input 
                           type="number" 
                           min="0"
@@ -940,6 +939,7 @@ const handleSaveProduct = async (productData: any) => {
                           onChange={(e) => setShippingRates({...shippingRates, [gov]: Number(e.target.value)})}
                           className="w-16 h-8 text-center text-xs font-bold rounded-lg border-border"
                         />
+                        <span className="text-muted-foreground text-sm">EGP</span>
                       </div>
                     </div>
                   ))}
